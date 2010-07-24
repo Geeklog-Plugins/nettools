@@ -165,7 +165,7 @@ function plugin_getuseroption_nettools()
 */  
 function plugin_uninstall_nettools($installCheck='')
 {
-    global $LANG_NT00;
+    global $_TABLES, $LANG_NT00;
 
     // The nettoolss need to be changed to the name of your plugin
     //
