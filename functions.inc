@@ -233,6 +233,8 @@ function plugin_chkVersion_nettools()
 */
 function plugin_upgrade_nettools()
 {
+    global $_CONF, $_TABLES;
+
     $installed_version = DB_getItem($_TABLES['plugins'], 'pi_version',
                                     "pi_name = 'nettools'");
     $code_version = plugin_chkVersion_nettools();
