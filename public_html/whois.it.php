@@ -25,40 +25,56 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* buydomains.whois     1.0     david@ols.es            2003/03/30 */
+/* 
+BUG
+- nserver -> array
+- ContactID in address
+*/
 
-if (!defined("__BUYDOMAINS_HANDLER__"))
-	define("__BUYDOMAINS_HANDLER__", 1);
+if (!defined('__IT_HANDLER__'))
+	define('__IT_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class buydomains_handler
+class it_handler
 	{
 
 	function parse($data_str, $query)
 		{
 
 		$items = array(
-                "owner" => "Registrant:",
-                "admin" => "Administrative Contact",
-                "tech" => "Technical Contact",
-                "zone" => "Zone Contact",
-                "domain.name" => "Domain Name:",
-                "domain.changed" => "Last updated on",
-                "domain.created" => "Domain created on",
-                "domain.expires" => "Domain expires on"
+			'domain.name' =>	'Domain:',
+			'domain.nserver' =>	'Nameservers',
+			'domain.status' =>	'Status:',
+			'domain.expires' =>	'Expire Date:',
+			'owner' 	=>	'Registrant',
+			'admin' 	=>	'Admin Contact',
+			'tech' 		=>	'Technical Contacts',
+			'registrar' =>	'Registrar'
 		            );
 
-		$r = get_blocks($data_str, $items);
+		$extra = array(
+			'address:' 		=> 'address.',
+			'contactid:'	=> 'handle',
+			'organization:' => 'organization',
+			'created:'		=> 'created',
+			'last update:' 	=> 'changed'
+		            );
 
-		$r["owner"] = get_contact($r["owner"]);
-		$r["admin"] = get_contact($r["admin"]);
-		$r["tech"] = get_contact($r["tech"]);
-		$r["zone"] = get_contact($r["zone"]);
-		format_dates($r, 'dmy');
+		$r['regrinfo'] = easy_parser($data_str['rawdata'], $items, 'ymd',$extra);
+			
+		if (isset($r['regrinfo']['registrar']))
+			{
+			$r['domain']['registrar'] = $r['regrinfo']['registrar'][0];
+			unset($r['regrinfo']['registrar']);
+			}
+
+		$r['regyinfo'] = array(
+                  'registrar' => 'IT-Nic',
+                  'referrer' => 'http://www.nic.it/'
+                  );
+
 		return ($r);
 		}
-
 	}
-
 ?>

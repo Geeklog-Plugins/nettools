@@ -28,17 +28,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /* netsol.whois	1.0	mark jeftovic	1999/12/06 */
 /* netsol.whois 2.0	david saez */
 
-if (!defined('__NETSOL_HANDLER__'))
-	define('__NETSOL_HANDLER__', 1);
+if (!defined('__NETWORKSOLUTIONS_HANDLER__'))
+	define('__NETWORKSOLUTIONS_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class netsol_handler
+class networksolutions_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
                   'owner'			=> 'Registrant:',
                   'admin'			=> 'Administrative Contact',
@@ -49,15 +47,7 @@ class netsol_handler
                   'domain.expires'	=> 'Record expires on'
 		              );
 
-		$r = get_blocks($data_str, $items);
-
-		if (isset($r['owner']))	$r['owner'] = get_contact($r['owner']);
-		if (isset($r['admin']))	$r['admin'] = get_contact($r['admin']);
-		if (isset($r['tech']))	$r['tech'] = get_contact($r['tech']);
-		
-		$r = format_dates($r, 'dmy');
-
-		return ($r);
+		return easy_parser($data_str, $items, 'dmy',false,true,true);
 		}
 	}
 ?>

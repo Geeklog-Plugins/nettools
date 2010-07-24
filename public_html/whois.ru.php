@@ -25,38 +25,41 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* stargate.whois 1.1	David Saez Padros <david@ols.es> */
+/* runic.whois	1.0	Vadim Smelyansky <vadim@vadiaz.com> 2007/01/25 */
 
-if (!defined("__STARGATE_HANDLER__"))
-	define("__STARGATE_HANDLER__", 1);
+if (!defined('__RU_HANDLER__'))
+	define('__RU_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class stargate_handler
+class ru_handler
 	{
 
 	function parse($data_str, $query)
 		{
-
 		$items = array(
-                'owner' => 'Registrant',
-                'admin' => 'Administrative',
-                'tech' => 'Technical',
-                'billing' => 'Billing',
-                'domain.name' => 'Domain Name:',
-                'domain.nserver.' => 'Name Servers',
-				'domain.created' => 'Creation Date:',
-                'domain.expires' =>	'Expiration Date:',
-                'domain.status' => 'Status:'
-		            );
+                  'domain:' => 'domain.name',
+                  'state:' => 'domain.status',
+                  'nserver:' => 'domain.nserver.',
+                  'source:' => 'domain.source',
+                  'created:' => 'domain.created',
+                  'paid-till:' => 'domain.expires',
+                  'type:' => 'owner.type',
+                  'org:' => 'owner.organization',
+                  'phone:' => 'owner.phone',
+                  'fax-no:' => 'owner.fax',
+                  'email:' => 'admin.email'
+		              );
 
-		$r = get_blocks($data_str, $items);
-		$r['owner'] = get_contact($r['owner']);
-		$r['admin'] = get_contact($r['admin']);
-		$r['tech'] = get_contact($r['tech']);
-		$r['billing'] = get_contact($r['billing']);
-		$r = format_dates($r, 'dmy');
+		$r['regrinfo'] = generic_parser_b($data_str['rawdata'], $items, 'dmy');
+
+		$r['regyinfo'] = array(
+                            'referrer' => 'http://www.ripn.net',
+                            'registrar' => 'RUCENTER-REG-RIPN'
+                          );
+
 		return ($r);
 		}
 	}
+
 ?>

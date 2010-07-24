@@ -25,44 +25,41 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* domainbank.whois 1.0	David Saez Padros <david@ols.es> */
+/* info.whois   2.0  David Seaz - updated to common object model */
+/* info.whois	1.0  David Saez Padros <david@ols.es> */
 
-if (!defined('__DOMAINBANK_HANDLER__'))
-	define('__DOMAINBANK_HANDLER__', 1);
+if (!defined('__FI_HANDLER__'))
+	define('__FI_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class domainbank_handler
+class fi_handler
 	{
 
 	function parse($data_str, $query)
 		{
 
 		$items = array(
-                  'owner' => 'Registrant:',
-                  'admin' => 'Administrative',
-                  'tech' => 'Technical',
-                  'zone' => 'Zone',
-                  'domain.name' => 'Domain:',
-                  'domain.nserver.' => 'Domain servers in listed order:',
-                  'domain.created' => 'Record created on ',
-                  'domain.expires' => 'Record expires on ',
-                  'domain.changed' => 'Record last updated ',
-                  'domain.sponsor' => 'Registrar:'
-		            );
+                  'domain:' => 'domain.name',
+                  'created:' => 'domain.created',
+                  'expires:' => 'domain.expires',
+                  'status:' => 'domain.status',
+                  'nserver:' => 'domain.nserver.',
+                  'descr:' => 'owner.name.',
+                  'address:' => 'owner.address.',
+                  'phone:' => 'owner.phone',
+                    );
 
-		$r = get_blocks($data_str, $items);
+		$r['regrinfo'] = generic_parser_b($data_str['rawdata'], $items);
+		
+		$r['regyinfo'] = array(
+                          'referrer' => 'https://domain.ficora.fi/',
+                          'registrar' => 'Finnish Communications Regulatory Authority'
+                          );
 
-		if (isset($r['owner']))
-			$r['owner'] = get_contact($r['owner']);
-		if (isset($r['admin']))
-			$r['admin'] = get_contact($r['admin']);
-		if (isset($r['tech']))
-			$r['tech'] = get_contact($r['tech']);
-		if (isset($r['zone']))
-			$r['zone'] = get_contact($r['zone']);
-
-		return ($r);
+		return $r;
 		}
+
 	}
+
 ?>

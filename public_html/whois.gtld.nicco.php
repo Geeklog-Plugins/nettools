@@ -25,37 +25,40 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* innerwise.whois 1.0	David Saez Padros <david@ols.es> */
-
-if (!defined("__INNERWISE_HANDLER__"))
-	define("__INNERWISE_HANDLER__", 1);
+if (!defined('__NICCO_HANDLER__'))
+	define('__NICCO_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class innerwise_handler
+class nicco_handler
 	{
 
 	function parse($data_str, $query)
 		{
 
 		$items = array(
-                "owner" => "Registrant",
-                "admin" => "Administrative",
-                "tech" => "Technical",
-                "billing" => "Billing",
-                "domain.name" => "Domain:",
-                "domain.nserver." => "Domain Name Servers:",
-                "domain.created" => "Record created on ",
-                "domain.expires" => "Record expires on ",
-                "domain.changed" => "Record last updated on "
-		            );
+                  'owner' => 'Holder Contact',
+                  'admin' => 'Admin Contact',
+                  'tech' => 'Tech. Contact',
+                  'domain.nserver.' => 'Nameservers',
+                  'domain.created' => 'Creation Date:',
+                  'domain.expires' => 'Expiration Date:'
+		              );
 
-		$r = get_blocks($data_str, $items);
-		$r['owner'] = get_contact($r['owner']);
-		$r['admin'] = get_contact($r['admin']);
-		$r['tech'] = get_contact($r['tech']);
-		$r['billing'] = get_contact($r['billing']);
-		$r = format_dates($r, 'mdy');
+		$translate = array(
+					'city:'			=> 'address.city',
+					'org. name:'	=> 'organization',
+					'address1:'		=> 'address.street.',
+					'address2:'		=> 'address.street.',
+					'state:'		=> 'address.state',
+					'postal code:'	=> 'address.zip'
+					);
+
+		$r = get_blocks($data_str, $items, true);
+		$r['owner'] = get_contact($r['owner'],$translate);
+		$r['admin'] = get_contact($r['admin'],$translate,true);
+		$r['tech'] = get_contact($r['tech'],$translate,true);
+		$r = format_dates($r, 'dmy');
 		return ($r);
 		}
 	}

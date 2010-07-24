@@ -53,7 +53,7 @@ while (list($key,$val)=each($contacts))
 			$blk=$r[$key];
 
 		$blk = strtoupper(strtok($blk,' '));
-		$ret[$val]=$blocks[$blk];
+		if (isset($blocks[$blk])) $ret[$val] = $blocks[$blk];
 		unset($r[$key]); 
 		}
 
@@ -81,7 +81,7 @@ while (list($key,$val)=each($rawdata))
 	{
 	$val=trim($val);
 
-	if ($val!='' && $val[0]=='%')
+	if ($val != '' && ($val[0] == '%' || $val[0] == '#'))
 		{
 		if (!$dend) $disclaimer[]=trim(substr($val,1));
 		continue;
@@ -148,36 +148,36 @@ return $blocks;
 function generic_parser_b ( $rawdata, $items, $dateformat='mdy', $hasreg=true, $scanall=false )
 
 {
-$r='';
-$disok=true;
+$r = '';
+$disok = true;
 
-while (list($key,$val)=each($rawdata))
+while (list($key,$val) = each($rawdata))
 	{
-	if (trim($val)!='')
+	if (trim($val) != '')
 		{ 
 	     if (($val[0]=='%' || $val[0]=='#') && $disok)
 			{
-			$r['disclaimer'][]=trim(substr($val,1));
-			$disok=true;
+			$r['disclaimer'][] = trim(substr($val,1));
+			$disok = true;
 			continue;
 			}
 	     
-		$disok=false;
+		$disok = false;
 		reset($items);
 
 		while (list($match, $field)=each($items)) 
 			{
-			$pos=strpos($val,$match);
+			$pos = strpos($val,$match);
 			
-			if ($pos!==false)
+			if ($pos !== false)
 				{
 				if ($field!='')
 					{
-					$var = "\$r".getvarname($field);
+					$var = '$r'.getvarname($field);
 					$itm = trim(substr($val,$pos+strlen($match)));
 				
 					if ($itm!='')
-						eval($var."=\"".str_replace('"','\"',$itm)."\";");
+						eval($var.'="'.str_replace('"','\"',$itm).'";');
 					}
 					
 				if (!$scanall) 
@@ -218,7 +218,7 @@ return $var;
 
 //-------------------------------------------------------------------------
 
-function get_blocks ( $rawdata, $items )
+function get_blocks ( $rawdata, $items, $partial_match = false )
 {
 
 $r = array();
@@ -232,13 +232,14 @@ while (list($key,$val) = each($rawdata))
 	$found = false;
 	reset($items);
 
-	while (list($field, $match) = each($items)) {
-
+	while (list($field, $match) = each($items))
+		{
 		$pos = strpos($val,$match);
 
-		if ($field != '' && $pos !== false) {
-
-			if ($val == $match) {
+		if ($field != '' && $pos !== false)
+			{
+			if ($val == $match)
+				{
 				$found = true;
 				$endtag = '';
 				$line = $val;
@@ -247,57 +248,53 @@ while (list($key,$val) = each($rawdata))
 
 			$last = substr($val,-1,1);
 
-			if ($last == ':' || $last == '-' || $last == ']') {
+			if ($last == ':' || $last == '-' || $last == ']')
+				{
 				$found = true;
 				$endtag = $last;
 				$line = $val;
 				break;
-			}
-			else {
-				$var = getvarname(strtok($field,"#"));
+				}
+			else
+				{
+				$var = getvarname(strtok($field,'#'));				
 				$itm = trim(substr($val,$pos+strlen($match)));
-				eval("\$r".$var."=\$itm;");
+				eval('$r'.$var.'=$itm;');
+				}
 			}
 		}
-	}
 
 	if (!$found) continue;
 
 	$block = array();
-	$found = false;
-	$spaces = 0;
 
+	// Block found, get data ...
+	
 	while (list($key,$val) = each($rawdata))
 		{ 
 		$val = trim($val);
 		
-		if ($val == '') { 
-			if ($found && ++$spaces == 2) break;	
-		    continue;
-            }
-		
-		if (!$found) {
-			$found = true;
-			$block[] = $val;
-			continue;
-			}
-			
-		$last = substr(trim($val),-1,1);
-		
+		if ($val == '' || $val == str_repeat($val[0],strlen($val))) continue;
+
+		$last = substr($val,-1,1);
+
 		if ($last == $endtag) {
 			// Another block found
 			prev($rawdata);
 			break;
 			}
 			
-		if ($endtag == '')
+		if ($endtag == '' || $partial_match)
 			{
 			//Check if this line starts another block
 			reset($items);
 			$et = false;
 			
-			while (list($field, $match) = each($items)) {
-				if ($val == $match)
+			while (list($field, $match) = each($items)) 
+				{
+				$pos = strpos($val,$match);
+				
+				if ($pos !== false && $pos == 0)
 					{
 					$et = true;
 					break;
@@ -312,28 +309,21 @@ while (list($key,$val) = each($rawdata))
 				}
 			}
 			
-		if ($spaces>0) {
-			reset($items);
-			$ok = true;
-			while (list($field, $match)=each($items)) {
-				$pos=strpos($val,$match);
-				if ($pos!==false) $ok=false;
-				}
-			if (!$ok) {
-				prev($rawdata);
-				break;
-				}
-			}
 		$block[]=$val;
 		}
 
 	reset($items);
 
-	while (list($field, $match)=each($items)) {
-		$pos=strpos($line,$match);
-		if ($pos!==false) {
-			$var=getvarname(strtok($field,'#'));
-			eval("\$r".$var."=\$block;");
+	if (empty($block)) continue;
+	
+	while (list($field, $match)=each($items))
+		{
+		$pos = strpos($line,$match);
+		
+		if ($pos !== false)
+			{
+			$var = getvarname(strtok($field,'#'));
+			if ($var != '[]') eval('$r'.$var.'=$block;');
 			}
 		}
 	}
@@ -343,7 +333,40 @@ return $r;
 
 //-------------------------------------------------------------------------
 
-function get_contact ( $array, $extra_items='' )
+function easy_parser($data_str, $items, $date_format, $translate = false , 
+					 $has_org = false, $partial_match = false )
+{
+$r = get_blocks($data_str, $items, $partial_match);
+$r = get_contacts($r, $translate, $has_org);
+format_dates($r, $date_format);
+return $r;
+}
+
+//-------------------------------------------------------------------------
+
+function get_contacts ( $array, $extra_items='', $has_org= false )
+{
+if (isset($array['billing']))
+	$array['billing'] = get_contact($array['billing'], $extra_items, $has_org);
+
+if (isset($array['tech']))
+	$array['tech'] = get_contact($array['tech'], $extra_items, $has_org);
+
+if (isset($array['zone']))
+	$array['zone'] = get_contact($array['zone'], $extra_items, $has_org);
+			
+if (isset($array['admin']))
+	$array['admin'] = get_contact($array['admin'], $extra_items, $has_org);
+		
+if (isset($array['owner']))
+	$array['owner'] = get_contact($array['owner'], $extra_items, $has_org);
+	
+return $array;
+}
+
+//-------------------------------------------------------------------------
+
+function get_contact ( $array, $extra_items='', $has_org= false )
 {
 
 if (!is_array($array))
@@ -360,6 +383,7 @@ $items = array (
 		'(fax)' => 'fax',
 		'fax' => 'fax',
 		'tel.' => 'phone',
+		'tel:' => 'phone',
 		'phone::' => 'phone',
 		'phone:' => 'phone',
 		'phone-' => 'phone',
@@ -376,8 +400,8 @@ $items = array (
 		'name:' => 'name'				
 		);
 
-if ($extra_items!='')
-	$items=array_merge($extra_items,$items);
+if ($extra_items)
+	$items = array_merge($extra_items,$items);
 
 while (list($key,$val)=each($array))
 	{
@@ -386,9 +410,9 @@ while (list($key,$val)=each($array))
 	while ($ok)
 		{
 		reset($items);
-		$ok=false;
-
-		while (list($match,$field)=each($items))
+		$ok = false;
+	
+		while (list($match,$field) = each($items))
 			{
 			$pos = strpos(strtolower($val),$match);
 			
@@ -396,74 +420,107 @@ while (list($key,$val)=each($array))
 
 			$itm = trim(substr($val,$pos+strlen($match)));
 
-			if ($field!='' && $itm!='')
+			if ($field != '' && $itm != '')
 				{
-				eval("\$r".getvarname($field)."=\$itm;");
+				eval('$r'.getvarname($field).'=$itm;');
 				}
 				
 			$val = trim(substr($val,0,$pos));
 
-			if ($val=='')
+			if ($val == '')
+				{
 				unset($array[$key]);
+				break;
+				}
 			else
 				{
-				$array[$key]=$val;
-				$ok=true;
+				$array[$key] = $val;
+				$ok = true;
 				}
-			break;
-			} 	
-		}
-		
-	if ($val=='') continue;
+			//break;
+			} 
 
-	if (!preg_match("/[^0-9\(\)\-\.\+ ]/", $val) && strlen($val)>5)
-           {
-	     if (isset($r['phone']))
-	        $r['fax']=$val;	
-	     else
-			$r['phone']=$val;
-	     unset($array[$key]);
-	     continue;
-	   }
-
-	if (strstr($val,'@'))
-		{
-		$val=str_replace("\t",' ',$val);	
-		$parts=explode(' ',$val);
-		$top=count($parts)-1;
-		$r['email']=str_replace('(','',$parts[$top]);
-		$r['email']=str_replace(')','',$r['email']);
-		array_pop($parts);
-		$val = trim(implode(' ',$parts));
-
-		if (strlen($val)<2) {
-			unset($array[$key]);
-			continue;
-			}
-			
-		$r['name']=$val;
-		unset($array[$key]);
-		
-		if ($key==1 && isset($array[0]))
+		if (preg_match("/([+]*[-0-9\(\)\. x]){7,}/", $val, $matches))
 			{
-			$r['organization']=$array[0];
-			unset($array[0]);
+			$phone = trim(str_replace(' ','',$matches[0]));
+			
+			if (strlen($phone) > 8 && !preg_match('/[0-9]{5}\-[0-9]{3}/',$phone))
+				{
+				if (isset($r['phone']))
+					{
+					if (isset($r['fax'])) continue;
+					$r['fax'] = trim($matches[0]);
+					}
+				else
+					{
+					$r['phone'] = trim($matches[0]);			
+					}
+				
+				$val = str_replace($matches[0],'',$val);	
+					
+				if ($val == '')
+					{
+					unset($array[$key]);
+					continue;
+					}
+				else
+					{
+					$array[$key] = $val;
+					$ok = true;
+					}
+				}
+			}
+
+		if (preg_match('/([-0-9a-zA-Z._+&\/=]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6})/',$val, $matches))
+			{		
+			$r['email'] = $matches[0];
+	
+			$val = str_replace($matches[0],'',$val);	
+			$val = trim(str_replace('()','',$val));
+			 
+			if ($val == '')
+				{
+				unset($array[$key]);
+				continue;
+				}
+			else
+				{
+				if (!isset($r['name']))
+					{
+					$r['name'] = $val;
+					unset($array[$key]);
+					}
+				else
+					$array[$key] = $val;
+					
+				$ok = true;
+				}
 			}
 		}
 	}     
 
 if (!isset($r['name']) && count($array)>0)
 	{
-	$r['name']=array_shift($array);
+	$r['name'] = array_shift($array);
+	}
+
+if ($has_org && count($array)>0)
+	{
+	$r['organization'] = array_shift($array);
 	}
 
 if (isset($r['name']) && is_array($r['name']))
 	{
-	$r['name']=implode($r['name'],' ');
+	$r['name'] = implode($r['name'],' ');
 	}
 
-if (!empty($array) && !isset($r['address']))
-	$r['address']=$array;
+if (!empty($array))
+	{
+	if (isset($r['address']))
+		$r['address'] = array_merge($r['address'],$array);
+	else
+		$r['address'] = $array;
+	}
 
 return $r;
 }
@@ -505,97 +562,101 @@ return $res;
 
 function get_date($date,$format)
 {
-$months=array( 'jan'=>1, 'feb'=>2, 'mar'=>3, 'apr'=>4,  'may'=>5,  'jun'=>6, 
-               'jul'=>7, 'aug'=>8, 'sep'=>9, 'oct'=>10, 'nov'=>11, 'dec'=>12 );
+$months = array( 'jan'=>1,  'ene'=>1,  'feb'=>2,  'mar'=>3, 'apr'=>4, 'abr'=>4,
+                 'may'=>5,  'jun'=>6,  'jul'=>7,  'aug'=>8, 'ago'=>8, 'sep'=>9,
+                 'oct'=>10, 'nov'=>11, 'dec'=>12, 'dic'=>12 );
 
-$parts=explode(' ',$date);
+$parts = explode(' ',$date);
 
-if (strpos($parts[0],'@')!==false)
+if (strpos($parts[0],'@') !== false)
 	{
 	unset($parts[0]);
-	$date=implode(' ',$parts);
+	$date = implode(' ',$parts);
 	}
 
-$date=str_replace(',',' ',trim($date));
-$date=str_replace('.',' ',$date);
-$date=str_replace('-',' ',$date);
-$date=str_replace('/',' ',$date);
-$date=str_replace("\t",' ',$date);
+$date = str_replace(',',' ',trim($date));
+$date = str_replace('.',' ',$date);
+$date = str_replace('-',' ',$date);
+$date = str_replace('/',' ',$date);
+$date = str_replace("\t",' ',$date);
 
-$parts=explode(' ',$date);
+$parts = explode(' ',$date);
 
-if ((strlen($parts[0])==8 || count($parts)==1) && is_numeric($parts[0]))
+if ((strlen($parts[0]) == 8 || count($parts) == 1) && is_numeric($parts[0]))
 	{
-	$val=$parts[0];
-	for ($p=$i=0;$i<3;$i++)
+	$val = $parts[0];
+	for ($p=$i=0; $i<3; $i++)
 		{
-		if ($format[$i]!='Y')
+		if ($format[$i] != 'Y')
 			{
-			$res[$format[$i]]=substr($val,$p,2);
-			$p+=2;
+			$res[$format[$i]] = substr($val,$p,2);
+			$p += 2;
 			}
 		else
 			{
-			$res['y']=substr($val,$p,4);
-			$p+=4;
+			$res['y'] = substr($val,$p,4);
+			$p += 4;
 			}
 		}
 	}
 else
 	{
-	for ($p=$i=0;$p<count($parts) && $i<strlen($format);$p++)
+	$format = strtolower($format);
+
+	for ($p=$i=0; $p<count($parts) && $i<strlen($format); $p++)
 		{
-		if (trim($parts[$p])=='')
+		if (trim($parts[$p]) == '')
 			continue;
 
-		if ($format[$i]!='-')
+		if ($format[$i] != '-')
 			{
-			$res[$format[$i]]=$parts[$p];
+			$res[$format[$i]] = $parts[$p];
 			}
 		$i++;
 		}
 	}
 
-$ok=false;
+$ok = false;
 
 while (!$ok)
 	{
 	reset($res);
-	$ok=true;
+	$ok = true;
+
 	while (list($key, $val) = each($res)) 
 		{
-		if ($val=='' || $key=='') continue;
+		if ($val == '' || $key == '') continue;
 
 		if (!is_numeric($val) && isset($months[substr(strtolower($val),0,3)]))
 			{
-			$res[$key]=$res['m'];
-			$res['m']=$months[substr(strtolower($val),0,3)];
-			$ok=false;
+			$res[$key] = $res['m'];
+			$res['m'] = $months[substr(strtolower($val),0,3)];
+			$ok = false;
 			break;
 			}
 
-		if ($key!='y' && $val>1900)
+		if ($key != 'y' && $key != 'Y' && $val > 1900)
 			{
 			$res[$key] = $res['y'];
-			$res['y']=$val;
-			$ok=false;
+			$res['y'] = $val;
+			$ok = false;
 			break;
 			}
 		}
 	}
 
-if ($res['m']>12)
+if ($res['m'] > 12)
 	{
-	$v=$res['m'];
-	$res['m']=$res['d'];
-	$res['d']=$v;
+	$v = $res['m'];
+	$res['m'] = $res['d'];
+	$res['d'] = $v;
 	}
 
-if ($res['y']<70)
-	$res['y']+=2000;
+if ($res['y'] < 70)
+	$res['y'] += 2000;
 else
-	if ($res['y']<=99)
-		$res['y']+=1900;
+	if ($res['y'] <= 99)
+		$res['y'] += 1900;
 
 return sprintf("%.4d-%02d-%02d",$res['y'],$res['m'],$res['d']);
 }

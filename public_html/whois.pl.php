@@ -32,82 +32,42 @@ require_once('whois.parser.php');
 
 class pl_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
-                	'owner' 	=> 'Subscribers Contact object:',
-					'domain'	=> 'Domain object:',
-					'tech'		=> 'Technical Contact:',
-					'x'			=> 'nservers:'
+                	'created:' 				=> 'domain.created',
+                	'last modified'			=> 'domain.changed',
+                	'REGISTRAR:'			=> 'domain.sponsor',
+                	"registrant's handle:"	=> 'owner.handle',
+                	
 					);
 
-		$fields = array (
-					'company:'			=> 'organization',
-					'street:'			=> 'address.street',
-					'city:'				=> 'address.city',
-					'location:'			=> 'address.country',
-					'handle:'			=> 'handle',
-					'created:'			=> 'created',
-					'last modified:'	=> 'changed',
-					'registrar:'		=> 'sponsor',
-					'phone:'			=> 'phone'
-					);
-					
-		$r = get_blocks($data_str['rawdata'], $items);
-		
-		if (isset($r['tech']))
+		$r['regrinfo'] = generic_parser_b($data_str['rawdata'], $items, 'ymd');			
+
+		if ($r['regrinfo']['registered'] == 'yes')
 			{
-			if ($r['tech'] == 'data restricted')
-				unset($r['tech']);
-			else
-				$r['tech'] = generic_parser_b($r['tech'], $fields, 'ymd', false);
-			}
-			
-		if (isset($r['owner']))
-			{
-			if ($r['owner'] == 'data restricted')
-				unset($r['owner']);
-			else
-				$r['owner'] = generic_parser_b($r['owner'], $fields, 'ymd', false);
-			
-			$r['domain'] = generic_parser_b($r['domain'], $fields, 'ymd', false);
-		
-			if (isset($r['domain']['handle']))
-				{
-				$r['owner']['handle'] = $r['domain']['handle'];
-				unset($r['domain']['handle']);
-				}
-				
-			// Get name servers
 			$found = false;
-			$ns = array();
 			
-			foreach ($data_str['rawdata'] as $line)
+			foreach($data_str['rawdata'] as $line)
 				{
-				if (substr($line,0,9) == 'nservers:')
+				if ($found)
+					{
+					if (strpos($line,':')) break;
+					$r['regrinfo']['domain']['nserver'][] = $line;
+					}
+	
+				if (strpos($line,'nameservers:') !== false)
 					{
 					$found = true;
-					$ns[] = strtok(trim(substr($line,9)),'[');
+					$r['regrinfo']['domain']['nserver'][] = substr($line,13);
 					}
-				else
-					if ($found)
-						{
-						if (substr($line,0,8) == 'created:')
-							break;
-						else
-							$ns[] = strtok($line,'[');
-						}
 				}
-			
-			$r['domain']['nserver'] = $ns;	
-			$r['registered'] = 'yes';
-			
-			$r = array ( 'regrinfo' => $r );
 			}
-		else
-			$r['regrinfo']['registered'] = 'no';
+
+		$r['regyinfo'] = array(
+			'referrer' => 'http://www.dns.pl/english/index.html',
+			'registrar' => 'NASK'
+			);
 
 		return ($r);
 		}

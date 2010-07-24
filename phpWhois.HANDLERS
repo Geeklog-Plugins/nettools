@@ -19,11 +19,12 @@ rawdata is always returned as it's filled by phpWhois itself. It
 contains the raw text output returned by the whois server.
 
 regyinfo contains information about the registry who returned that
-information. It has three subkeys: 'whois' (the whois server who
-returned the data), 'referrer' (the web address of the registry),
-'registar' (the company name of the registry), 'rwhois' is extra
-rwhois informatio has been found and 'type' which can be 'domain',
-'ip' or 'AS'.
+information. It has four subkeys: 'servers' which is an array with
+one entry for each whois server who returned the data, 'referrer' the
+web address of the registry, 'registar' the company name of the registry
+and 'type' which can be 'domain', 'ip' or 'AS'. The 'servers' array
+has subkeys 'server' the whois server, 'port' the whois server port and
+'args' the query sent to the server.
 
 regrinfo holds the information about the domain itself. It could have
 the following subkeys:
@@ -110,12 +111,10 @@ the following subkeys:
 		source		-> who provided that information
 		remarks		-> remarks
 
-	provider
-	--------
-
-	when extra rwhois or whois information about ip address space
-	delegation is available this subkey will contain the
-    information of the owner of the upstream ip block.
+    When information is requested on ip addresses any of those
+	keys could be an array which will contain all data found on
+	different whois or rwhois servers (each owner, admin, tech,
+	etc ... found in each query).
 
 Not all handlers fill values in each of the keys defined by the
 Common Object Model as not all registries return the same amount
@@ -149,14 +148,19 @@ contains the raw output of the query and is what need to be parsed
 in order to generate the Common Object Model. $query contains
 the domain, ip adrress or AS that it's being queried. That function
 must return an array with any available result in the format defined
-by this document. Country handlers must be defined in the file
-whois.servers.php on the array DATA where the key is the iso
-country code and the value the handler name (xx).
+by this document. Country handlers need not to be defined in
+the file whois.servers.php, only when you want to use some handler
+for several different country domains you need to add it to the array
+DATA where the key is the iso country code and the value the handler
+name (xx).
 
-Handlers for .com/.net/.tv domains are defined in whois.gtld.php
-and are named whois.gtld.xxx.php where xxx is the name of the
-handler defined as the value in the array REGISTRARS in the
-file whois.gtld.php. It must be implemented the same way as
+Handlers for .com/.net/.tv domains are handled by whois.gtld.php
+and named whois.gtld.xxx.php where xxx is the 'midname' (for example,
+for whois.srsplus.com, the midname is srsplus) of the whois server who
+provides information for that domains. If you want to reuse another
+handler of your handler 'midname' conflicts with any existing gtld
+handler you could define the handler name in the array WHOIS_GTLD_HANDLER
+in the file whois.servers.php. It must be implemented the same way as
 country handlers.
 
 Some useful utility functions have been written to aid in developing

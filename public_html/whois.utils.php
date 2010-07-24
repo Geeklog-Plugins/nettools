@@ -29,7 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /* 		1.1 Mark Jeftovic <markjr@easydns.com> 1999/12/15 */
 
 class utils extends Whois {
-
+	/*
+	Not updated anymore
 	var $REGISTRARS = array(
 		'ac' => 'http://www.nic.ac/cgi-bin/whois',
 		'ad' => 'http://www.nic.ad/',
@@ -104,22 +105,25 @@ class utils extends Whois {
 			return false;
 		}
 	}
+	*/
 
 	// showObject() and debugObject()
 	// - debug code to show an object or array
 
-	function showObject(&$obj) {
+	function showObject(&$obj)
+		{
 		$r = $this->debugObject($obj);
 		return "<PRE>$r</PRE>\n";
-	}
+		}
 
-	function debugObject($obj,$indent=0) {
-		if (is_Array($obj) || is_Object($obj)) {
+	function debugObject($obj,$indent=0)
+		{
+		if (is_Array($obj))
+			{
 			$return = '';
-			while (list($k,$v)=each($obj)) {
-				for ($i=0;$i<$indent;$i++) {
-					$return .= '&nbsp;';
-				}
+			foreach($obj as $k => $v)
+				{
+				$return .= str_repeat('&nbsp;',$indent);
 				$return .= $k."->$v\n";
 				$return .= $this->debugObject($v,$indent+1);
 			}
@@ -141,41 +145,72 @@ class utils extends Whois {
 		$html_regex = "/(?:^|\b)((((http|https|ftp):\/\/)|(www\.))([\w\.]+)([,:%#&\/?~=\w+\.-]+))(?:\b|$)/is";
 		$ip_regex = "/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/i";
 		
-		$out = implode($result['rawdata'],"\n");
+		$out = '';
+		$lempty = true;
 		
+		foreach($result['rawdata'] as $line)
+			{
+			$line = trim($line);
+
+			if ($line == '')
+				{
+				if ($lempty) continue;
+				else $lempty = true;
+				}
+			else
+				$lempty = false;
+				
+			$out .= $line."\n";
+			}
+
+		if ($lempty) $out = trim($out);
+
+		$out = strip_tags($out);
 		$out = preg_replace ($email_regex, '<a href="mailto:$0">$0</a>', $out); 
 		$out = preg_replace_callback ($html_regex, 'href_replace', $out); 
 		
 		if ($link_myself)
 			{
-			$out = preg_replace ($ip_regex, '<a href="'.$_SERVER['PHP_SELF'].'?'.$params.'">$0</a>', $out); 			
-				
+			if ($params[0] == '/')
+				$link = $params;
+			else
+				$link = $_SERVER['PHP_SELF'].'?'.$params;
+			
+			$out = preg_replace ($ip_regex, '<a href="'.$link.'">$0</a>', $out); 			
+			
 			if (isset($result['regrinfo']['domain']['nserver']))
 				{
 				$nserver = $result['regrinfo']['domain']['nserver'];
-			
-				if (is_array($nserver))
+				}
+			else
+				$nserver = false;
+				
+			if (isset($result['regrinfo']['network']['nserver']))
+				{
+				$nserver = $result['regrinfo']['network']['nserver'];
+				}
+				
+			if (is_array($nserver))
+				{
+				reset($nserver); 
+				while (list($host, $ip) = each($nserver))
 					{
-					reset($nserver); 
-					while (list($host, $ip) = each($nserver))
-						{
-						$url = '<a href="'. $_SERVER['PHP_SELF'].'?'.str_replace('$0',$ip,$params)."\">$host</a>";
-						$out = str_replace($host, $url, $out);
-						$out = str_replace(strtoupper($host), $url, $out);
-						}
+					$url = '<a href="'. str_replace('$0',$ip,$link)."\">$host</a>";
+					$out = str_replace($host, $url, $out);
+					$out = str_replace(strtoupper($host), $url, $out);
 					}
 				}
 			}
 		
 		// Add bold field names
 		
-		$out = preg_replace ("/(?m)^([\w\s-]+:)/", '<b>$1</b>', $out);
+		$out = preg_replace ("/(?m)^([-\s\.&;'\w\t\(\)\/]+:\s*)/", '<b>$1</b>', $out);
 		
 		// Add italics for disclaimer
 		
 		$out = preg_replace ("/(?m)^(%.*)/", '<i>$0</i>', $out);
 			
-		return str_replace("\n","<br></br>\n",$out);
+		return str_replace("\n","<br/>\n",$out);
 	}
 }
 

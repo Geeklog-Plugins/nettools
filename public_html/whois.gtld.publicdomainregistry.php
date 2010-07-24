@@ -25,34 +25,33 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-if (!defined('__CONTENDER_HANDLER__'))
-	define('__CONTENDER_HANDLER__', 1);
+/* directnic.whois     1.0     david@ols.es            2003/03/30 */
+
+if (!defined('__PUBLICDOMAINREGISTRY_HANDLER__'))
+	define('__PUBLICDOMAINREGISTRY_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class contender_handler
+class publicdomainregistry_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
-                'owner'	=> 'Registrant:',
-                'admin' => 'Administrative Contact:',
-                'tech' => 'Technical Contact:',
-                'domain.name' => 'Domain name:',
-                'domain.nserver.' => 'Domain servers in listed order:',
-                'domain.created' => 'Record created on',
-                'domain.expires' => 'Record expires on',
-                'domain.changed' => 'Record last updated'
-		            );
+              'owner' => 'Registrant:',
+              'owner#' => '(Registrant):',
+              'admin' => 'Administrative Contact',
+              'tech' => 'Technical Contact',
+              'domain.name' => 'Domain name:',
+              'domain.sponsor' => 'Registration Service Provided By:',
+              'domain.nserver' => 'Domain servers in listed order:',
+              'domain.changed' => 'Record last updated ',
+              'domain.created' => 'Record created on',
+              'domain.created#' => 'Creation Date:',
+              'domain.expires' => 'Record expires on',
+              'domain.expires#' => 'Expiration Date:'
+		          );
 
-		$r = get_blocks($data_str, $items);
-		$r['owner'] = get_contact($r['owner']);
-		$r['admin'] = get_contact($r['admin']);
-		$r['tech'] = get_contact($r['tech']);
-		format_dates($r, 'ymd');
-		return ($r);
+		return easy_parser($data_str, $items, 'mdy', false, true, true);
 		}
 	}
 ?>

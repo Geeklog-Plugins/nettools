@@ -28,17 +28,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 /* opensrsnet.whois	1.0	jeremiah bellomy	2000/04/06 */
 /* opensrsnet.whois     2.1     david@ols.es            2003/02/15 */
 
-if (!defined('__OPENSRSNET_HANDLER__'))
-	define('__OPENSRSNET_HANDLER__', 1);
+if (!defined('__OPENSRS_HANDLER__'))
+	define('__OPENSRS_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class opensrsnet_handler
+class opensrs_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
                   'owner'			=> 'Registrant:',
                   'admin'			=> 'Administrative Contact',
@@ -48,20 +46,16 @@ class opensrsnet_handler
                   'domain.nserver'	=> 'Domain servers in listed order:',
                   'domain.changed'	=> 'Record last updated on',
                   'domain.created'	=> 'Record created on',
-                  'domain.expires'	=> 'Record expires on'
+                  'domain.expires'	=> 'Record expires on',
+                  'domain.sponsor'	=> 'Registrar of Record:'
 		              );
 
-		$r = get_blocks($data_str, $items);
+		$r = easy_parser($data_str, $items, 'dmy', false, false, true);
 
 		if (isset($r['domain']['sponsor']) && is_array($r['domain']['sponsor']))
 			$r['domain']['sponsor'] = $r['domain']['sponsor'][0];
 
-		if (isset($r['owner'])) $r['owner'] = get_contact($r['owner']);
-		if (isset($r['admin'])) $r['admin'] = get_contact($r['admin']);
-		if (isset($r['tech'])) $r['tech'] = get_contact($r['tech']);
-		$r = format_dates($r, 'dmy');
 		return ($r);
 		}
 	}
-
 ?>

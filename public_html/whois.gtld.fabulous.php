@@ -25,32 +25,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-if (!defined('__CHDOM_HANDLER__'))
-	define('__CHDOM_HANDLER__', 1);
+/* directnic.whois     1.0     david@ols.es            2003/03/30 */
+
+if (!defined('__FABULOUS_HANDLER__'))
+	define('__FABULOUS_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class chdom_handler
+class fabulous_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
-                'admin' => 'Administrative',
-                'tech' => 'Technical',
-                'domain.created' => 'Created on:',
-                'domain.changed' => 'Last Updated on:',
-                'domain.expires' => 'Expires on:',
-                'domain.nserver' => 'Domain servers in listed order:',
-                'domain.sponsor' => "Registrar:"
-		            );
+              'owner' => 'Domain '.$query.':',
+              'admin' => 'Administrative contact:',
+              'tech' => 'Technical contact:',
+              'billing' => 'Billing contact:',
+              '' => 'Record dates:'
+		          );
 
-		$r = get_blocks($data_str, $items);
-		$r = format_dates($r, 'dmy');
-		return $r;
+		$r = easy_parser($data_str, $items, 'mdy',false,false,true);
+
+		if (!isset($r['tech']))
+			{
+			$r['tech'] = $r['billing'];
+			}
+
+		if (!isset($r['admin']))
+			{
+			$r['admin'] = $r['tech'];
+			}
+		
+		return ($r);
 		}
-
 	}
-
 ?>
