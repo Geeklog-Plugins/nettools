@@ -1,0 +1,38 @@
+<pre>
+Install/Uninstall instruction for the Geeklog Net Tools plugin.
+
+INSTALL:
+
+Step 1:  Back up your Geeklog Database.  The Net Tools plugin adds tables to your Geeklog database.  You can do
+this with the built in admin backup facility.
+
+Step 2:  Uncompress the Net Tools plugin archive while in the <geeklog_dir>/plugins directory.  The archive will
+create a directory called Net Tools in the plugins directory.
+
+Step 3:  Create the public_html and admin directories.  Under your html directory (usually public_html) 
+create a directory called Net Tools.  Under your admin/plugins/ directory create a directory called Net Tools.
+
+Step 4:  Change to your <geeklog_dir>/plugins/Net Tools/ directory.  Copy the files in the admin directory 
+to the admin/plugins/Net Tools/ directory your created in step 3.  Copy the files and directories in the 
+public_html directory to the public_html/Net Tools/ directory your created in step 3.
+
+Step 5:  Log in to your Geeklog as a root user and run install.php in your admin/plugins/Net Tools/ directory.
+The install page will tell you if the install was successful or not.  If not examine Geeklog system errorlog
+for possible problems.
+
+The Net Tools plugin should now be installed and functioning.  Clicking on the Net Tools Icon will
+take you to the admin page.  
+
+Step 7: Set up security.  On install only the root users have access to Net Tools Viewing.  
+You can delegate control for either of these functions through the user and group editors.
+
+UNINSTALL:
+
+Step 1:  Run the install.php page in your admin/plugins/Net Tools directory.  This will remove all the data from
+your database.
+
+Step 2:  Delete the three plugin directories created in the install process:  <geeklog-dir>plugins/Net Tools/ 
+<public_html>/Net Tools/ and <admin>/plugins/Net Tools/
+
+Thats it.
+</pre>

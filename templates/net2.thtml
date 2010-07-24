@@ -1,0 +1,5 @@
+<a href="{site_url}/nettools/nettools.php"><img src="{img_src}" border="0"></a><br>
+<p>
+{form_output}
+</p>
+<p>Powered by phpWhois</p>
