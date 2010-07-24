@@ -32,62 +32,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 $this->DATA_VERSION = '19';
 
 $this->DATA = array(
-	'aero'		=> 'aero',
-	'ag'		=> 'ag',
-	'at'		=> 'at',
-	'au'		=> 'au',
-	'biz'		=> 'biz',
-	'be'		=> 'be',
-	'br'		=> 'br',
-	'ca'		=> 'ca',
-	'cat'		=> 'cat',
-	'ch'		=> 'ch',
-	'cn'		=> 'cn',
+	'bz'		=> 'gtld',
 	'com'		=> 'gtld',
-	'coop'		=> 'coop',
-	'cz'		=> 'cz',
-	'de'		=> 'de',
-	'edu'		=> 'edu',
-	'es'		=> 'es',
-	'eu'		=> 'eu',
-	'fm'		=> 'fm',
-	'hu'		=> 'hu',
-	'ie'		=> 'ie',
-	'in'		=> 'in',
-	'info'		=> 'info',
-	'int'		=> 'int',
-	'is'		=> 'is',
 	'jobs'		=> 'gtld',
 	'li'		=> 'ch',
-	'lu'		=> 'lu',
-	'lt'		=> 'lt',
-	'mobi'		=> 'mobi',
-	'museum'	=> 'museum',
-	'mx'		=> 'mx',
-	'name'		=> 'name',
 	'net'		=> 'gtld',
-	'nl'		=> 'nl',
-	'nu'		=> 'nu',
-	'nz'		=> 'nz',
-	'org'		=> 'org',
-	'pl'		=> 'pl',
-	'pro'		=> 'pro',
-	'sc'		=> 'sc',
-	'se'		=> 'se',
-	'travel'	=> 'travel',
 	'tv'		=> 'gtld',
-	'uk'		=> 'uk',
-	'us'		=> 'us',
-	'ws'		=> 'ws',
-	'za.org'	=> 'za',
-	'za.net'	=> 'za'
+	'za.org'	=> 'zanet',
+	'za.net'	=> 'zanet'
+	);
+
+/* Non UTF-8 servers */
+
+$this->NON_UTF8 = array(
+	'whois.interdomain.net' => 1
 	);
 
 /* If whois Server needs any parameters, enter it here */
 
 $this->WHOIS_PARAM = array(
-	'com.whois-servers.net' => '=',
-	'net.whois-servers.net' => '=',
+	'com.whois-servers.net' => 'domain =',
+	'net.whois-servers.net' => 'domain =',
 	'de.whois-servers.net'	=> '-T dn,ace '
 	);
 
@@ -95,7 +60,7 @@ $this->WHOIS_PARAM = array(
 
 $this->WHOIS_SPECIAL = array(
 		'ad'	 => '',
-		'ae'	 => 'http://www.nic.ae/english/whois/display.jsp?domain={domain}.ae&queryType=domain&check=on',
+		'ae'	 => 'whois.nic.ae',
 		'af'	 => 'whois.nic.af',
 		'ai'	 => 'http://whois.offshore.ai/cgi-bin/whois.pl?domain-name={domain}.ai',
 		'al'	 => '',
@@ -106,26 +71,65 @@ $this->WHOIS_SPECIAL = array(
 		'bi'	 => 'whois.nic.bi',
 		'bj'	 => 'whois.nic.bj',
 		'by'	 => '',
-		'co.za'  => 'http://co.za/cgi-bin/whois.sh?Domain={domain}.co.za',
+		'bz'	 => 'whois2.afilias-grs.net',		
 		'cy'	 => '',
-		'es'	 => 'http://www.neodigit.es/dominios/whois.php?dom={domain}.es',
-		'fm'     => 'http://www.dot.fm/query_whois.cfm?domain={domain}&tld=fm',
-		'jobs'	 => 'jobswhois.verisign-grs.com',
+		'es'	 => '',
+		'fm'     => 'http://www.dot.fm/query_whois.cfm?domain={domain}&tld=fm',		
+		'jobs'	 => 'jobswhois.verisign-grs.com',				
+		'la'	 => 'whois.centralnic.net',		
+		'gr'	 => '',
 		'gs'     => 'http://www.adamsnames.tc/whois/?domain={domain}.gs',
+		'me'	 => 'whois.meregistry.net',
 		'mobi'	 => 'whois.dotmobiregistry.net',
 		'ms'     => 'http://www.adamsnames.tc/whois/?domain={domain}.ms',
-		'mt'	 => 'http://www.um.edu.mt/cgi-bin/nic/whois?domain={domain}.mt',
-		'net.au' => 'whois.aunic.net',
+		'mt'	 => 'http://www.um.edu.mt/cgi-bin/nic/whois?domain={domain}.mt',				
 		'pe'	 => 'http://nic.pe/detpublic.php?decid=B&ndom={domain}.pe',
 		'pr'	 => 'whois.uprr.pr',
-		'pro'	 => 'whois.registry.pro',
-		'sc'     => 'whois2.afilias-grs.net',
+		'pro'	 => 'whois.registry.pro',		
+		'sc'     => 'whois2.afilias-grs.net',		
 		'tc'     => 'http://www.adamsnames.tc/whois/?domain={domain}.tc',
 		'tf'     => 'http://www.adamsnames.tc/whois/?domain={domain}.tf',
-		'travel' => 'http://www.whois.travel/whois.cgi?TLD=travel&dn={domain}&TYPE=DOMAIN',
+		've'	 => 'whois.nic.ve',
 		'vg'     => 'http://www.adamsnames.tc/whois/?domain={domain}.vg',
+		// Second level
+		'net.au' => 'whois.aunic.net',		
+		'ae.com' => 'whois.centralnic.net',
+		'br.com' => 'whois.centralnic.net',
+		'cn.com' => 'whois.centralnic.net',
+		'de.com' => 'whois.centralnic.net',
+		'eu.com' => 'whois.centralnic.net',
+		'hu.com' => 'whois.centralnic.net',		
+		'jpn.com'=> 'whois.centralnic.net',
+		'kr.com' => 'whois.centralnic.net',
+		'gb.com' => 'whois.centralnic.net',
+		'no.com' => 'whois.centralnic.net',
+		'qc.com' => 'whois.centralnic.net',
+		'ru.com' => 'whois.centralnic.net',
+		'sa.com' => 'whois.centralnic.net',
+		'se.com' => 'whois.centralnic.net',		
+		'za.com' => 'whois.centralnic.net',
+		'uk.com' => 'whois.centralnic.net',		
+		'us.com' => 'whois.centralnic.net',
+		'uy.com' => 'whois.centralnic.net',		
+		'gb.net' => 'whois.centralnic.net',
+		'se.net' => 'whois.centralnic.net',
+		'uk.net' => 'whois.centralnic.net',		
 		'za.net' => 'whois.za.net',
-		'za.org' => 'whois.za.net'
+		'za.org' => 'whois.za.net',
+		'co.za'  => 'http://co.za/cgi-bin/whois.sh?Domain={domain}.co.za',
+		'org.za' => 'http://www.org.za/cgi-bin/rwhois?domain={domain}.org.za&format=full'
+		);
+		
+/* handled gTLD whois servers */
+
+$this->WHOIS_GTLD_HANDLER = array(
+		'whois.bulkregister.com'			=> 'enom',
+		'whois.dotregistrar.com'			=> 'dotster',
+		'whois.namesdirect.com'				=> 'dotster',
+		'whois.psi-usa.info'				=> 'psiusa',
+		'whois.www.tv'						=> 'tvcorp',
+		'whois.tucows.com'					=> 'opensrs',
+		'whois.35.com'						=> 'onlinenic'
 		);
 		
 /* Non ICANN TLD's */

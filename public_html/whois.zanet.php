@@ -27,17 +27,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /* zanic.whois	1.0	Brett Cave, based on code by David Saez */
 
-if (!defined("__ZA_HANDLER__"))
-	define("__ZA_HANDLER__", 1);
+if (!defined('__ZANET_HANDLER__'))
+	define('__ZANET_HANDLER__', 1);
 
 require_once('whois.parser.php');
 
-class za_handler
+class zanet_handler
 	{
 
 	function parse($data_str, $query)
 		{
-
 		$items = array(
                   'domain.name' => 'Domain Name            : ',
                   'domain.created' => 'Record Created         :',
@@ -46,7 +45,8 @@ class za_handler
                   'admin' => 'Administrative Contact :',
                   'tech' => 'Technical Contact      :',
                   'domain.nserver' => 'Domain Name Servers listed in order:',
-                  'registered' => 'No such domain: '
+                  'registered' => 'No such domain: ',
+                  '' => 'The ZA NiC whois'
 		              );
 
 		// Arrange contacts ...
@@ -69,8 +69,6 @@ class za_handler
 			$rawdata[] = $line;
 			}
 
-		$r['rawdata'] = $rawdata;
-
 		$r['regrinfo'] = get_blocks($rawdata, $items);
 
 		if (isset($r['regrinfo']['registered']))
@@ -79,15 +77,17 @@ class za_handler
 			}
 		else
 			{
-			$r['regrinfo']['admin'] = get_contact($r['regrinfo']['admin']);
-			$r['regrinfo']['tech'] = get_contact($r['regrinfo']['tech']);
+			if (isset($r['regrinfo']['admin']))
+				$r['regrinfo']['admin'] = get_contact($r['regrinfo']['admin']);
+				
+			if (isset($r['regrinfo']['tech']))
+				$r['regrinfo']['tech'] = get_contact($r['regrinfo']['tech']);
 			}
 
 		$r['regyinfo']['referrer'] = 'http://www.za.net/'; // or http://www.za.org
 		$r['regyinfo']['registrar'] = 'ZA NiC';
-
 		$r = format_dates($r, 'xmdxxy');
-
+		
 		return ($r);
 		}
 	}

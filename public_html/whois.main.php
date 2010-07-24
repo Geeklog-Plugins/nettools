@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 require_once('whois.client.php');
+require_once('whois.idna.php');
 
 class Whois extends WhoisClient
 	{
@@ -69,14 +70,25 @@ class Whois extends WhoisClient
 		{
 		$this->WHOIS_SPECIAL[$tld] = $server;
 		}
-		
-	function Lookup($query = '')
+	
+	/*
+	 *  Lookup query
+	 */
+	 
+	function Lookup($query = '', $is_utf = true)
 		{
 		// start clean
-		$this->Query['status'] = 0;
+		$this->Query['status'] = '';
 		
 		$query = trim($query);
 
+		$IDN = new idna_convert();
+		
+		if ($is_utf)
+			$query = $IDN->encode($query);
+		else
+			$query = $IDN->encode(utf8_encode($query));
+		
 		// If domain to query was not set
 		if (!isSet($query) || $query == '')
 			{
@@ -87,7 +99,7 @@ class Whois extends WhoisClient
 
 		// Set domain to query in query array
 
-		$this->Query['string'] = $domain = strtolower($query);
+		$this->Query['query'] = $domain = strtolower($query);
 
 		// If query is an ip address do ip lookup
 
@@ -96,10 +108,11 @@ class Whois extends WhoisClient
 			// Prepare to do lookup via the 'ip' handler
 			$ip = @gethostbyname($query);
 			$this->Query['server'] = 'whois.arin.net';
+			$this->Query['args'] = $ip;
 			$this->Query['host_ip'] = $ip;
 			$this->Query['file'] = 'whois.ip.php';
 			$this->Query['handler'] = 'ip';
-			$this->Query['string'] = $ip;
+			$this->Query['query'] = $ip;
 			$this->Query['tld'] = 'ip';
 			$this->Query['host_name'] = @gethostbyaddr($ip);
 			return $this->GetData('',$this->deep_whois);
@@ -110,7 +123,7 @@ class Whois extends WhoisClient
 		$tld = '';
 		$server = '';
 		$dp = explode('.', $domain);
-		$np = count($dp) - 1;
+		$np = count($dp)-1;
 		$tldtests = array();
 
 		for ($i = 0; $i < $np; $i++)
@@ -139,8 +152,8 @@ class Whois extends WhoisClient
 				if ($val == '')
 					{
 					unset($this->Query['server']);
-					$this->Query['status'] =  - 1;
-					$this->Query['errstr'][] = $this->Query['string'].' domain is not supported';
+					$this->Query['status'] = 'error';
+					$this->Query['errstr'][] = $this->Query['query'].' domain is not supported';
 					return ;
 					}
 					
@@ -184,10 +197,19 @@ class Whois extends WhoisClient
 
 			foreach($tldtests as $htld)
 				{
-				// special handler exists for the tld ?				
+				// special handler exists for the tld ?
+				
 				if (isSet($this->DATA[$htld]))
-					{
+				    {
 					$handler = $this->DATA[$htld];
+					break;
+					}
+					
+				// Regular handler exists for the tld ?
+
+				if (($fp = @fopen('whois.'.$htld.'.php', 'r', 1)) and fclose($fp))
+				    {
+					$handler = $htld;
 					break;
 					}
 				}
@@ -210,8 +232,8 @@ class Whois extends WhoisClient
 
 		// If tld not known, and domain not in DNS, return error
 		unset($this->Query['server']);
-		$this->Query['status'] =  - 1;
-		$this->Query['errstr'][] = $this->Query['string'].' domain is not supported';
+		$this->Query['status'] = 'error';
+		$this->Query['errstr'][] = $this->Query['query'].' domain is not supported';
 		return ;
 		}
 
@@ -244,7 +266,6 @@ class Whois extends WhoisClient
 	 */
 	function FixResult(&$result, $domain)
 		{
-
 		// Add usual fields
 		$result['regrinfo']['domain']['name'] = $domain;
 
@@ -263,55 +284,17 @@ class Whois extends WhoisClient
 				$result['regrinfo']['registered'] = 'unknown';
 			}
 
-		if (!isset($result['regrinfo']['domain']['nserver']))
-			return ;
-
 		// Normalize nameserver fields
-		$nserver = $result['regrinfo']['domain']['nserver'];
-
-		if (!is_array($result['regrinfo']['domain']['nserver']))
+		
+		if (isset($result['regrinfo']['domain']['nserver']))
 			{
-			unset($result['regrinfo']['domain']['nserver']);
-			return ;
-			}
-
-		$dns = array();
-
-		while (list($key, $val) = each($nserver))
-			{
-			$val = str_replace('[', '', trim($val));
-			$val = str_replace(']', '', $val);
-			$val = str_replace("\t", ' ', $val);
-			$parts = explode(' ', $val);
-			$host = '';
-			$ip = '';
-
-			while (list($k, $p) = each($parts))
+			if (!is_array($result['regrinfo']['domain']['nserver']))
 				{
-				if ($p == '')
-					continue;
-				if ((ip2long($p) == - 1) or (ip2long($p) === false))
-					{
-					if ($host == '')
-						$host = $p;
-					}
-				else
-					$ip = $p;
+				unset($result['regrinfo']['domain']['nserver']);
 				}
-			if ($ip == '')
-				{
-				$ip = gethostbyname($host);
-				if ($ip == $host)
-					$ip = '(DOES NOT EXIST)';
-				}
-
-			if (substr($host,-1,1) == '.')
-				$host = substr($host,0,-1);
-				
-			$dns[strtolower($host)] = $ip;
+			else
+				$result['regrinfo']['domain']['nserver'] = $this->FixNameServer($result['regrinfo']['domain']['nserver']);
 			}
-
-		$result['regrinfo']['domain']['nserver'] = $dns;
 		}
 	}
 

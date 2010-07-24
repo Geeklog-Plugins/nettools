@@ -1,5 +1,5 @@
 
-$Id: README,v 1.18 2006/05/31 15:02:10 sparc Exp $
+$Id: README,v 1.21 2009/12/29 11:34:51 sparc Exp $
 
 Introduction
 ------------
@@ -15,6 +15,9 @@ In addition, if the domain belongs to a registrar for which a special
 handler exists, the special handler will parse the output and make
 additional elements available in the response. The keys of these
 additional elements are described in the file HANDLERS.
+
+It fully supports IDNA (internationalized) domains names as
+defined in RFC3490, RFC3491, RFC3492 and RFC3454.
 
 It also supports ip/AS whois queries which are very useful to trace
 SPAM. You just only need to pass the doted quad ip address or the
@@ -56,10 +59,19 @@ Example usage
 include('whois.main.php');
 
 $whois = new Whois();
-$result = $whois->Lookup('example.com');
+$query = 'example.com';
+$result = $whois->Lookup($query,false);
 echo "<pre>";
 print_r($result);
 echo "</pre>";
+
+If you provide the domain name to query in UTF8, then you
+must use:
+
+$result = $whois->Lookup($query);
+
+If the query string is not in UTF8 then it must be in
+ISO-8859-1 or IDNA support will not work.
 
 What you can query
 ------------------
@@ -143,6 +155,13 @@ this will tell phpWhois to just query one whois server. For .com, .net
 and .tv domains and ip addresses this will prevent phpWhois to ask more
 than one whois server, you will just know if the donmain is registered
 or not and which is the registrar but not the owner information.
+
+UTF-8
+-----
+
+PHPWhois will assume that all whois servers resturn UTF-8 encoded output,
+if some whois server does not return UTF-8 data, you can include it in
+the NON_UTF8 array in whois.servers.php
 
 Notes 
 -----
