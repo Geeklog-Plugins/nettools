@@ -149,65 +149,34 @@ function plugin_getuseroption_nettools()
 }
 
 /**
-* Removes the datastructures for this plugin from the Geeklog database.
-* This routine will get called from the Plugin install program if user select De-Install or if Delete is used in the Plugin Editor.
-* The Plugin Installer will also call this routine upon and install error to remove anything it has created.
-* The Plugin installer will pass the optional parameter which will then double check that plugin has first been disabled. 
-* 
-* For this plugin, this routine will also remove the Block definition.
-* 
-* Returns True if all Plugin related data is removed without error
+* Automatic uninstall function for plugins
 *
-* @param    string   $installCheck     Defult is blank but if set, check if plugin is disabled first
-* 
-* @return   boolean True if successful false otherwise
+* @return   array
 *
-*/  
-function plugin_uninstall_nettools($installCheck='')
+* This code is automatically uninstalling the plugin.
+* It passes an array to the core code function that removes
+* tables, groups, features and php blocks from the tables.
+* Additionally, this code can perform special actions that cannot be
+* foreseen by the core code (interactions with other plugins for example)
+*
+*/
+function plugin_autouninstall_nettools ()
 {
-    global $_TABLES, $LANG_NT00;
+    $out = array (
+        // give the name of the tables, without $_TABLES[]
+        'tables' => array(),
+        // give the full name of the group, as in the db
+        'groups' => array('Nettools Admin'),
+        // give the full name of the feature, as in the db
+        'features' => array('Whois.view', 'NSLookup.view', 'Ping.view',
+                            'Tracert.view'),
+        // give the full name of the block, including 'phpblock_', etc
+        'php_blocks' => array(),
+        // only present in Nettools 1.0 and 2.0
+        'vars'=> array('nettools_gid')
+    );
 
-    // The nettoolss need to be changed to the name of your plugin
-    //
-    $pi_name='nettools';
-    $FEATURES = array ( 'Whois.view', 'Tracert.view', 'Ping.view', 'NSLookup.view');
-    
-    // Check and see if plugin is still enabled - if so display warning and exit
-    if ($installCheck != '' && DB_getItem($_TABLES['plugins'],'pi_enabled', 'pi_name = "' .$pi_name. '"')) {
-	    COM_errorLog("Plugin is installed and enabled. Disable first if you want to de-install it",1);
-		$display .= COM_startBlock($LANG_NT00['warning']);
-		$display .= $LANG_NT00['enabled'];
-		$display .= COM_endBlock();
-		echo $display;
-		return false;
-		exit;
-	}
-    	
-	// Ok to proceed and delete plugin
-
-    // Unregister the plugin with Geeklog
-    COM_errorLog('Attempting to unregister the nettools plugin from Geeklog',1);
-    DB_query("DELETE FROM {$_TABLES['plugins']} WHERE pi_name = 'nettools'",1);
-
-    // Remove Security for this plugin
-    $grp_id = DB_getItem($_TABLES['vars'], 'value', "name = '{$pi_name}_gid'");
-    
-    COM_errorLog("Removing $pi_name Admin Group", 1);
-    DB_query("DELETE FROM {$_TABLES['groups']} WHERE grp_id = $grp_id",1);
-    DB_query("DELETE FROM {$_TABLES['vars']} WHERE name = '{$pi_name}_gid'");
-    COM_errorLog("Removing root users from admin of $pi_name");
-    DB_query("DELETE FROM {$_TABLES['group_assignments']} WHERE ug_main_grp_id = $grp_id",1);
-    
-    // Remove all the associated features -- access rights
-    foreach ($FEATURES as $feature) {
-        COM_errorLog("Removing $feature feature and rights to it",1);
-        $feat_id = DB_getItem($_TABLES['features'], 'ft_id', "ft_name = '$feature'");
-        DB_query("DELETE FROM {$_TABLES['access']} WHERE acc_ft_id = $feat_id",1);
-        DB_query("DELETE FROM {$_TABLES['features']} WHERE ft_id = $feat_id",1);
-    }
-        
-    COM_errorLog('...success',1);
-    return true;
+    return $out;
 }
 
 /**
