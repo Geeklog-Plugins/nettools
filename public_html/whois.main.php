@@ -78,7 +78,7 @@ class Whois extends WhoisClient
 	function Lookup($query = '', $is_utf = true)
 		{
 		// start clean
-		$this->Query['status'] = '';
+		$this->Query = array( 'status' => '' );
 		
 		$query = trim($query);
 
@@ -108,7 +108,7 @@ class Whois extends WhoisClient
 			// Prepare to do lookup via the 'ip' handler
 			$ip = @gethostbyname($query);
 			$this->Query['server'] = 'whois.arin.net';
-			$this->Query['args'] = $ip;
+			$this->Query['args'] = "n $ip";
 			$this->Query['host_ip'] = $ip;
 			$this->Query['file'] = 'whois.ip.php';
 			$this->Query['handler'] = 'ip';
@@ -205,9 +205,9 @@ class Whois extends WhoisClient
 					break;
 					}
 					
-				// Regular handler exists for the tld ?
-
+				// Regular handler exists for the tld ?				
 				if (($fp = @fopen('whois.'.$htld.'.php', 'r', 1)) and fclose($fp))
+				//if (file_exists('whois.'.$htld.'.php'))
 				    {
 					$handler = $htld;
 					break;

@@ -140,8 +140,13 @@ class WhoisClient {
 					}
 				}
 			else
-				$query_args = $query;
-			
+				{
+				if (empty($this->Query['args']))
+					$query_args = $query;
+				else
+					$query_args = $this->Query['args'];
+				}
+
 			$this->Query['args'] = $query_args;
 
 			if (substr($this->Query['server'],0,9) == 'rwhois://')
@@ -149,6 +154,11 @@ class WhoisClient {
 				$this->Query['server'] = substr($this->Query['server'],9);
 				}
 
+			if (substr($this->Query['server'],0,8) == 'whois://')
+				{
+				$this->Query['server'] = substr($this->Query['server'],8);
+				}
+			
 			// Get port
 			
 			if (strpos($this->Query['server'],':'))
