@@ -1,0 +1,71 @@
+Geeklog NetTools Plugin
+Tom Willett
+Sept. 30, 2004
+
+Note the only change is to upgrade the whois script to phpWhois the successor to Whois2
+
+The NetTools plugin makes some basic network tools available in the Geeklog framework.  It consists of 4 tools:  Whois, 
+NSLookup, Ping and TraceRoute.  The Whois implementation is based on the GPL phpWhois 3.05.  Future changes to phpWhois
+should be a direct drop in replacement.  See (http://www.easydns.com/~markjr/whois2/).  
+
+There are five pages of interest to the user of this plugin:
+	nettools.php	A general page giving access to all of the tools the user has access to.
+	whois.php	Like all the tool pages it handles both input and output.  If called directly it presents a
+			form to enter in an address or domain to lookup.  If called with variables it presents the 
+			result of the query.
+	nslookup.php	Does a simple nslookup of an ip or domain name.  As a bonus, if run on a linux server, it will
+			also display the Mail (MX) record if it is available.
+	ping.php	Pings an address or website.  By default it only pings 4 times.  The ping page waits until the 
+			external ping command returns, before displaying anything.  (Note:  unlike normal php pages a
+			php page waiting for an external command will wait forever for command to return).
+	tracert.php	Displays the route to a website or address.  It behaves like the ping page since it also calls an
+			external command.
+
+All of these pages reside in the nettools directory under public_html.
+
+Since it is a plugin, it uses Geeklog security.  It creates 4 new security rights and assigns them to the Nettools.admin group. 
+Each of the four tool pages has its own security right.  So whois.php has whois.view, ping.php has ping.view, etc.  If you want 
+to be able to use only a subset of these tools you can make a restricted group that has only those tools in it.  If a user has 
+rights to use any of the tools the plugin makes an entry in the user menu to the nettools.php page.  This page only shows those 
+tools that the user has the right to use.
+
+The reason I started looking into this tool set was to have a reliable source for whois for the stats plugin.  If you install this 
+tool set you can enable the use of the whois by setting the Visitor Stats plugin whois variables like this:
+
+$_ST_Whois_URL_start = '<a href="' . $_CONF['site_url'] . '/nettools/whois.php?domain=';
+$_ST_Whois_URL_end = '" target="_blank">';
+
+
+If you are doing this you probably want to add whois.view to the stats security group.  Besides having a reliable Whois service 
+this also keeps you users onsite.
+
+INSTALLATION:
+
+1) Uncompress the archive in you /path to geeklog/plugins/ directory.  This will create a nettools directory.
+2) Make two directories called nettools.  One under your public_html (public_html/nettools/) and one under the plugins directory
+   under your admin directory (admin/plugins/nettools/).
+3) Copy the files in the /path to geeklog/plugins/nettools/public_html/ directory to the public_html/nettools/ directory you made 
+   earlier.
+4) Copy the files in the /path to geeklog/plugins/nettools/admin/ directory to admin/plugins/nettools.
+5) Run the install script at http://your.site/admin/plugins/nettools/install.php.
+6) The install script does not make any tables, it only installs the security for the plugin.
+7) Set up any security you want.
+
+UNINSTALLATION:
+
+1) Disable the plugin.
+2) Run the uninstall script.
+2) Delete the three directories named nettools.  ie.  plugins/nettools, public_html/nettools, admin/plugins/nettools.
+
+Version 2.0 Changes
+April 12, 2007
+
+This version uses phpWhois 4.1.2  The documentation for this php class is the files that start with phpWhois.
+
+You can speed up whois searches by changing the variable 
+$whois->deep_whois = false;
+in the whois.php file in public_html.
+
+
+Enjoy.
+TomW

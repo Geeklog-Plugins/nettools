@@ -1,0 +1,12 @@
+<a href="{site_url}/nettools/nettools.php"><img src="{img_src}" border="0"></a><br>
+<!-- BEGIN frmquery -->
+<p><font size="3">{query_txt}</font></p>
+<form method="post" action="{site_url}/nettools/{query_page}">
+<input type="text" name="{input}" value=""/>&nbsp;
+{in2_msg} &nbsp;<input type="{in_type}" name="count" value="4" size="5"/>
+<input type="submit" name="{sub_name}" value="{sub_value}"/>
+</form><hr>
+<!-- END frmquery -->
+<pre>
+{form_output}
+</pre>
