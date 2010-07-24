@@ -1,7 +1,8 @@
 <?php
-//
+
+/* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Nettools  Plugin 1.0 for Geeklog - The Ultimate Weblog                    |
+// | Nettools Plugin 2.1 for Geeklog                                           |
 // +---------------------------------------------------------------------------+
 // | functions.inc                                                             |
 // | This file does two things: 1) it implements the necessary Geeklog Plugin  |
@@ -9,7 +10,7 @@
 // | PHP files.                                                                |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2002 by the following authors:                              |
+// | Copyright (C) 2002-2010 by the following authors:                         |
 // |                                                                           |
 // | Author:                                                                   |
 // | Tom Willett                 -    twillett@users.sourceforge.net           |
@@ -30,26 +31,18 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-//
 
 /**
 * Language file Include
 */
 $langfile = $_CONF['path'] . 'plugins/nettools/language/' . $_CONF['language'] . '.php';
 
-if (file_exists ($langfile)) 
-{
-    require_once ($langfile);
-}
-else 
-{
-    require_once ($_CONF['path'] . 'plugins/nettools/language/english.php');
+if (file_exists($langfile)) {
+    require_once $langfile;
+} else {
+    require_once $_CONF['path'] . 'plugins/nettools/language/english.php';
 }
 
-/*
-* Include nettools config file
-*/
-require_once ($_CONF['path'] . 'plugins/nettools/config.php');
 
 // +---------------------------------------------------------------------------+
 // | Geeklog Plugin API Implementations                                        |
