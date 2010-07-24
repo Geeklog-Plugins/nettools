@@ -12,8 +12,7 @@
 // +---------------------------------------------------------------------------+
 // | Copyright (C) 2002-2010 by the following authors:                         |
 // |                                                                           |
-// | Author:                                                                   |
-// | Tom Willett                 -    twillett@users.sourceforge.net           |
+// | Authors: Tom Willett      - twillett AT users DOT sourceforge DOT net     |
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
@@ -208,6 +207,63 @@ function plugin_uninstall_nettools($installCheck='')
     }
         
     COM_errorLog('...success',1);
+    return true;
+}
+
+/**
+* Return the current version of code.
+* Used in the Plugin Editor to show the registered version and code version
+*/
+function plugin_chkVersion_nettools()
+{
+    global $_CONF;
+
+    require_once $_CONF['path'] . 'plugins/nettools/autoinstall.php';
+
+    $inst_parms = plugin_autoinstall_nettools('nettools');
+
+    return $inst_parms['info']['pi_version'];
+}
+
+/**
+* Update the Nettools plugin
+*
+* @return   int     Number of message to display (true = generic success msg)
+*
+*/
+function plugin_upgrade_nettools()
+{
+    $installed_version = DB_getItem($_TABLES['plugins'], 'pi_version',
+                                    "pi_name = 'nettools'");
+    $code_version = plugin_chkVersion_nettools();
+    if ($installed_version == $code_version) {
+        // nothing to do
+        return true;
+    }
+
+    require_once $_CONF['path'] . 'plugins/nettools/autoinstall.php';
+
+    $inst_parms = plugin_autoinstall_nettools('nettools');
+    $pi_gl_version = $inst_parms['info']['pi_gl_version'];
+
+    $current_version = $installed_version;
+    $done = false;
+    while (! $done) {
+        switch ($current_version) {
+        case '1.0':
+        case '2.0':
+            // no changes required - just update the version number
+            $current_version = '2.1.0';
+            break;
+
+        default:
+            $done = true;
+            break;
+        }
+    }
+
+    DB_query("UPDATE {$_TABLES['plugins']} SET pi_version = '$code_version', pi_gl_version = '$pi_gl_version' WHERE pi_name = 'nettools'");
+
     return true;
 }
 
