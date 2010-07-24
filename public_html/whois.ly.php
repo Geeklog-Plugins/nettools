@@ -25,51 +25,44 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* chnic.whois	1.1	David Saez Padros <david@ols.es>  For .ch & .li domains */
-/*  8/1/2002    1.2     Added status (active/inactive) and corrected error */
-/*                      for inactive domains */
-/*                      (like creart.ch) thanx to Roger Fichmann */
-/* 24/7/2002    2.0     David Saez - updated to new object model */
-/* 17/3/2003    2.1     David Saez - rewritten to use generic3.whois */
+/* ly.whois	1.0	Franck Martin <franck@avonsys.com>  For .ly domains */
 
 require_once('whois.parser.php');
 
-if (!defined('__CH_HANDLER__'))
-	define('__CH_HANDLER__', 1);
+if (!defined('__LY_HANDLER__'))
+	define('__LY_HANDLER__', 1);
 
-class ch_handler
+class ly_handler
 	{
 
 	function parse($data_str, $query)
 		{
 
 		$items = array(
-                'owner' => 'Holder of domain name:',
-                'domain.name' => 'Domain name:',
-                'domain.created' => 'Date of last registration:',
-                'domain.changed' => 'Date of last modification:',
-                'tech' => 'Technical contact:',
-                'domain.nserver' => 'Name servers:',
-                'domain.dnssec'	=> 'DNSSEC:'
+				'owner' => 'Registrant:',
+				'admin' => 'Administrative Contact:',
+				'tech' => 'Technical Contact:',
+				'domain.name' => 'Domain Name:',
+				'domain.status' => 'Domain Status:',
+				'domain.created' => 'Created:',
+				'domain.changed' => 'Updated:',
+				'domain.expires' => 'Expired:',
+				'domain.nserver' => 'Domain servers in listed order:'
 		            );
+
+		$extra = array( 'zip/postal code:' => 'address.pcode' );
 
 		$r['regrinfo'] = get_blocks($data_str['rawdata'], $items);
 
 		if (!empty($r['regrinfo']['domain']['name']))
 			{
-			$r['regrinfo'] = get_contacts($r['regrinfo']);
+			$r['regrinfo'] = get_contacts($r['regrinfo'],$extra);
 			
 			$r['regrinfo']['domain']['name'] = $r['regrinfo']['domain']['name'][0];
 			
-			if (isset($r['regrinfo']['domain']['changed'][0]))
-				$r['regrinfo']['domain']['changed'] = get_date($r['regrinfo']['domain']['changed'][0], 'dmy');
-				
-			if (isset($r['regrinfo']['domain']['created'][0]))
-				$r['regrinfo']['domain']['created'] = get_date($r['regrinfo']['domain']['created'][0], 'dmy');
-
 			$r['regyinfo'] = array(
-                          'referrer' => 'http://www.nic.ch',
-                          'registrar' => 'SWITCH Domain Name Registration'
+                          'referrer' => 'http://www.nic.ly',
+                          'registrar' => 'Libya ccTLD'
                           );
 
 			$r['regrinfo']['registered'] = 'yes';
@@ -82,6 +75,7 @@ class ch_handler
 
 		return ($r);
 		}
-
 	}
 ?>
+
+ 	  	 
