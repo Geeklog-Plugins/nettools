@@ -4,7 +4,7 @@ Whois.php        PHP classes to conduct whois queries
 
 Copyright (C)1999,2005 easyDNS Technologies Inc. & Mark Jeftovic
 
-Maintained by David Saez (david@ols.es)
+Maintained by David Saez
 
 For the most recent version of this package visit:
 
@@ -60,7 +60,7 @@ class WhoisClient {
 		);
 
 	// This release of the package
-	var $CODE_VERSION = '4.2.0';
+	var $CODE_VERSION = '4.2.2';
 	
 	// Full code and data version string (e.g. 'Whois2.php v3.01:16')
 	var $VERSION;
@@ -273,7 +273,7 @@ class WhoisClient {
 			$result['errstr'] = $this->Query['errstr'];
 
 		// Fix/add nameserver information
-		if (method_exists($this,'FixResult') && $this->Query['tld']!='ip')
+		if (method_exists($this,'FixResult') && $this->Query['tld'] != 'ip')
 			$this->FixResult($result,$query);
 			
 		return($result);
@@ -481,7 +481,7 @@ class WhoisClient {
 		if (!isset($result['regyinfo']['whois'])) return $result;
 		
 		$this->Query['server'] = $wserver = $result['regyinfo']['whois'];
-		
+		unset($result['regyinfo']['whois']);
 		$subresult = $this->GetRawData($query);
 
 		if (!empty($subresult))
@@ -591,5 +591,5 @@ class WhoisClient {
 
 		return $dns;
 		}
-
 }
+?>

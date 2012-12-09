@@ -4,7 +4,7 @@ Whois.php        PHP classes to conduct whois queries
 
 Copyright (C)1999,2005 easyDNS Technologies Inc. & Mark Jeftovic
 
-Maintained by David Saez (david@ols.es)
+Maintained by David Saez
 
 For the most recent version of this package visit:
 
@@ -25,8 +25,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* fj.whois     1.0     Franck Martin <franck@avonsys.com>  For .fj domains */
-
 require_once('whois.parser.php');
 
 if (!defined('__FJ_HANDLER__'))
@@ -34,48 +32,36 @@ if (!defined('__FJ_HANDLER__'))
 
 class fj_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
 				'owner' => 'Registrant:',
 				'domain.status' => 'Status:',
-				'domain.name' => 'Domain name:',
 				'domain.expires' => 'Expires:',
 				'domain.nserver' => 'Domain servers:'
 		            );
 
 		$r['regrinfo'] = get_blocks($data_str['rawdata'], $items);
 
-		if (!empty($r['regrinfo']['domain']['name']))
+		if (!empty($r['regrinfo']['domain']['status']))
 			{
 			$r['regrinfo'] = get_contacts($r['regrinfo']);
-			
-			$r['regrinfo']['domain']['name'] = $r['regrinfo']['domain']['name'][0];
-		
+
 			date_default_timezone_set("Pacific/Fiji");
 
 			if (isset($r['regrinfo']['domain']['expires']))
 				$r['regrinfo']['domain']['expires'] = strftime("%Y-%m-%d",strtotime($r['regrinfo']['domain']['expires']));
 
-			$r['regyinfo'] = array(
-                          'referrer' => 'http://www.domains.fj',
-                          'registrar' => 'FJ Domain Name Registry'
-                          );
-
 			$r['regrinfo']['registered'] = 'yes';
 			}
 		else
-			{
-			$r = '';
 			$r['regrinfo']['registered'] = 'no';
-			}
 
-		return ($r);
+		$r['regyinfo'] = array(
+                         'referrer' => 'http://www.domains.fj',
+                         'registrar' => 'FJ Domain Name Registry'
+                         );
+		return $r;
 		}
-
 	}
 ?>
-
- 	  	 
