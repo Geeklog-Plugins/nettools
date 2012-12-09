@@ -223,8 +223,9 @@ function plugin_upgrade_nettools()
         switch ($current_version) {
         case '1.0':
         case '2.0':
+        case '2.1.0':
             // no changes required - just update the version number
-            $current_version = '2.1.0';
+            $current_version = '2.1.1';
             break;
 
         default:

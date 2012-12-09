@@ -1,24 +1,13 @@
-Nettools Plugin 2.1 for Geeklog
+Nettools Plugin 2.1.1 for Geeklog
 
 Original author: Tom Willet,
-updated Aug 1, 2010 by Dirk Haun
+updated Aug 1, 2010 & Dec 9, 2012 by Dirk Haun
 
 The Nettools plugin provides networking tools for Whois, NSLookup, Ping, and
-Traceroute. Due to changes in the Whois services, the Whois lookup stopped
-working in July 2010 (or rather, it only provided generic information about
-an IP range but no detailed information about the actual owner of an IP range).
-
-This update to the Nettools plugin includes new Whois code, taken from the CVS
-version(!) of the PHPWhois project,
+Traceroute. This update to the Nettools plugin includes new Whois code, taken
+from phpWhois 4.2.2
 
   http://sourceforge.net/projects/phpwhois/
-
-At the time of this writing, there was no official new release of PHPWhois with
-these fixes yet. I will provide another update to the plugin once there is an
-official new PHPWhois release.
-
-The only other change in this plugin version was that I've dropped support for
-Geeklog versions prior to 1.6.0.
 
 Upgrading: If you are running one of Tom's versions of this plugin and want to
 upgrade to this new version, please follow these steps:
@@ -37,7 +26,7 @@ A lot of files have changed and have been added or removed in this version, so
 the above steps will ensure you will have a clean update.
 
 Dirk Haun,
-2010-08-01
+2012-12-09
 
 
 Tom's original Readme.txt follows ...

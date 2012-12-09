@@ -4,7 +4,7 @@ Whois.php        PHP classes to conduct whois queries
 
 Copyright (C)1999,2005 easyDNS Technologies Inc. & Mark Jeftovic
 
-Maintained by David Saez (david@ols.es)
+Maintained by David Saez
 
 For the most recent version of this package visit:
 
@@ -25,8 +25,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* names4ever.whois 1.0	Brandon Whaley <redkrieg@gmail.com> */
-
 if (!defined('__NAMES4EVER_HANDLER__'))
 	define('__NAMES4EVER_HANDLER__', 1);
 
@@ -34,27 +32,23 @@ require_once('whois.parser.php');
 
 class names4ever_handler
 	{
-
 	function parse($data_str, $query)
 		{
-
 		$items = array(
                   'owner' => 'Registrant:',
                   'admin' => 'Administrative Contact',
-                  'tech' => 'Technical Contact',
+                  'tech' => 'Technical  Contact',
                   'domain.name' => 'Domain Name:',
-                  'domain.sponsor' => 'Registrar of Record:',
-                  'domain.nserver' => 'Domain servers in listed order:',
+                  'domain.sponsor' => 'Registrar Name....:',
+                  'domain.referrer' => 'Registrar Homepage:',
+                  'domain.nserver' => 'DNS Servers:',
                   'domain.created' => 'Record created on',
                   'domain.expires' => 'Record expires on',
                   'domain.changed' => 'Record last updated on',
                   'domain.status' => 'Domain status:'
 		              );
-//print_r($data_str);
-                $r = easy_parser($data_str, $items, 'dmy', false, false, true);
-                if (isset($r['domain']['sponsor']) && is_array($r['domain']['sponsor']))
-			$r['domain']['sponsor'] = $r['domain']['sponsor'][0];
-		return ($r);
+
+		return easy_parser($data_str, $items, 'dmy', false, false, true);
 		}
 	}
 ?>
