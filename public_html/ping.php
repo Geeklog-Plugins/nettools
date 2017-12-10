@@ -30,19 +30,21 @@
 
 $max_count = 10; //maximum count for ping command
 
-require_once('../lib-common.php');
-include('config.php');
+require_once '../lib-common.php';
+require_once './config.php';
+require_once './common.php';
 
 // Only let Net users access this page
 if ((!SEC_hasRights('Ping.view')) && (!SEC_inGroup('Root'))) {
     // Someone is trying to illegally access this page
-    COM_errorLog("Someone has tried to illegally access the Ping page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
-    $display = COM_siteHeader();
-    $display .= COM_startBlock($LANG_NT00['access_denied']);
-    $display .= $LANG_NT00['access_denied_msg'];
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter(true);
-    echo $display;
+    $uid = isset($_USER['uid']) ? $_USER['uid'] : 0;
+    $userName = isset($_USER['username']) ? $_USER['username'] : '';
+    COM_errorLog("Someone has tried to illegally access the Ping page.  User id: {$uid}, Username: {$userName}, IP: {$_SERVER['REMOTE_ADDR']}",1);
+    $content = COM_startBlock($LANG_NT00['access_denied'])
+        . $LANG_NT00['access_denied_msg']
+        . COM_endBlock();
+    $display = COM_createHTMLDocument($content, array('what' => 'menu'));
+    COM_output($display);
     exit;
 }
 
@@ -50,56 +52,61 @@ if ((!SEC_hasRights('Ping.view')) && (!SEC_inGroup('Root'))) {
 * Main Function
 */
 
-$display = COM_siteHeader();
-$display .= COM_startBlock($LANG_NT00['ping']);
+$content = COM_startBlock($LANG_NT00['ping']);
 
+if (Geeklog\Input::post('submit') === $LANG_NT00['ping']) {
+    $host = Geeklog\Input::post('host', '');
+    $count = (int) Geeklog\Input::fPost('count', 0);
 
-If ($submit == $LANG_NT00['ping']) 
-{
-   // over count ?
-   If ($count > $max_count) 
-   {
+    // over count ?
+    if ($count > $max_count) {
         $count = $max_count;
-   }
-   // try to make it safe
-   $host = preg_replace ("/[^A-Za-z0-9.]/","",$host);
-   $host = escapeshellcmd($host);
-   $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
-   $T->set_file('page', 'net2.thtml');
-   $T->set_block('page','Arow','ABlock');
-   $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
-   $T->set_var('site_url',$_CONF['site_url']);
-   $T->set_var('row_name', $LANG_NT00['ping_out']);
-   $T->set_var('row_data','');
-   $T->parse('ABlock','Arow',true);
-   
-   //check target IP or domain
-   if ($_NT_linux) {
-         $T->set_var('form_output', shell_exec ("ping -c$count -w$count $host"));
-         shell_exec("killall ping");// kill all ping processes in case there are some stalled ones
-   } else {
-         $T->set_var('form_output', shell_exec("ping -n $count $host"));
-   }
+    }
+
+    // try to make it safe
+    $host = preg_replace ('/[^A-Za-z0-9._-]/', '', $host);
+    $host = escapeshellcmd($host);
+    $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+    $T->set_file(array(
+        'page' => 'net2.thtml',
+        'row'  => 'row.thtml',
+    ));
+    $T->set_var('img_src', $_CONF['site_url'] . '/nettools/net.gif');
+    $T->set_var('site_url', $_CONF['site_url']);
+    $T->set_var('row_name', $LANG_NT00['ping_out']);
+    $T->set_var('row_data', '');
+    $T->parse('rows', 'row', true);
+
+    //check target IP or domain
+    if ($_NT_linux) {
+        $result = shell_exec("ping -c$count -w$count $host");
+        shell_exec("killall ping");// kill all ping processes in case there are some stalled ones
+    } else {
+        $result = shell_exec("ping -n $count $host");
+    }
+
+    $result = NETTOOLS_formatResult($result);
+    $T->set_var('form_output', $result);
 } else {
     $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
     $T->set_file('page', 'nettools.thtml');
-    $T->set_block('page','frmquery','ABlock');
-    $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
-    $T->set_var('site_url',$_CONF['site_url']);
-    $T->set_var('query_txt',$LANG_NT00['ping']);
-    $T->set_var('query_page','ping.php');
-    $T->set_var('input','host');
-    $T->set_var('in_type','text');
-    $T->set_var('in2_msg','Count');
-    $T->set_var('sub_name','submit');
-    $T->set_var('sub_value',$LANG_NT00['ping']);
-    $T->parse('ABlock','frmquery',true);
-    $T->set_var('form_output','');
+    $T->set_block('page', 'frmquery', 'ABlock');
+    $T->set_var('img_src', $_CONF['site_url'] . '/nettools/net.gif');
+    $T->set_var('site_url', $_CONF['site_url']);
+    $T->set_var('query_txt', $LANG_NT00['ping']);
+    $T->set_var('query_page', 'ping.php');
+    $T->set_var('input', 'host');
+    $T->set_var('in_type', 'text');
+    $T->set_var('in2_msg', 'Count');
+    $T->set_var('sub_name', 'submit');
+    $T->set_var('sub_value', $LANG_NT00['ping']);
+    $T->parse('ABlock', 'frmquery', true);
+    $T->set_var('form_output', '');
 }
-$T->set_var('logo','');
-$T->parse('output','page');
-$display .= $T->finish($T->get_var('output'));
-$display .= COM_endBlock();
-$display .= COM_siteFooter(true);
-echo $display;
-?>
+
+$T->set_var('logo', '');
+$T->parse('output', 'page');
+$content .= $T->finish($T->get_var('output'))
+    . COM_endBlock();
+$display = COM_createHTMLDocument($content, array('what' => 'menu'));
+COM_output($display);

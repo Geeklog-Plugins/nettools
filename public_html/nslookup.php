@@ -26,21 +26,21 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-//
-// $Id: 
 
-require_once('../lib-common.php');
+require_once '../lib-common.php';
+require_once './common.php';
 
 // Only let Net users access this page
 if ((!SEC_hasRights('NSLookup.view')) && (!SEC_inGroup('Root'))) {
     // Someone is trying to illegally access this page
-    COM_errorLog("Someone has tried to illegally access the nslookup page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
-    $display = COM_siteHeader();
-    $display .= COM_startBlock($LANG_NT00['access_denied']);
-    $display .= $LANG_NT00['access_denied_msg'];
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter(true);
-    echo $display;
+    $uid = isset($_USER['uid']) ? $_USER['uid'] : 0;
+    $userName = isset($_USER['username']) ? $_USER['username'] : '';
+    COM_errorLog("Someone has tried to illegally access the Nslookup page.  User id: {$uid}, Username: {$userName}, IP: {$_SERVER['REMOTE_ADDR']}",1);
+    $content = COM_startBlock($LANG_NT00['access_denied'])
+        . $LANG_NT00['access_denied_msg']
+        . COM_endBlock();
+    $display = COM_createHTMLDocument($content, array('what' => 'menu'));
+    COM_output($display);
     exit;
 }
 
@@ -48,69 +48,79 @@ if ((!SEC_hasRights('NSLookup.view')) && (!SEC_inGroup('Root'))) {
 * Main Function
 */
 
-$display = COM_siteHeader();
-$display .= COM_startBlock($LANG_NT00['nslookup']);
+$content = COM_startBlock($LANG_NT00['nslookup']);
+$domain = trim(Geeklog\Input::post('domain', ''));
 
-if(isset($_REQUEST['domain'])) {
-	$domain = $_REQUEST['domain'];
-} else {
-    $domain = '';
-}
-
-if ($domain <> '') {
+if ($domain !== '') {
     $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
-    $T->set_file('page', 'net2.thtml');
-    $T->set_block('page','Arow','ABlock');
-    $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
-    $T->set_var('site_url',$_CONF['site_url']);
-    if (is_numeric(substr($domain,0,3))) {
+    $T->set_file(array(
+        'page' => 'net2.thtml',
+        'row'  => 'row.thtml',
+    ));
+    $T->set_var('img_src', $_CONF['site_url'] . '/nettools/net.gif');
+    $T->set_var('site_url', $_CONF['site_url']);
+
+    if (preg_match('/^[0-9.]+$/', $domain)) {
         $hostname = gethostbyaddr($domain);
+
+        if (($hostname === $domain) || ($hostname === false)) {
+            $hostname = $LANG_NT00['unresolved'];
+        }
+
         $T->set_var('row_name', $LANG_NT00['name']);
         $T->set_var('row_data', $hostname);
-        $T->parse('ABlock','Arow',true);
+        $T->parse('rows', 'row', true);
         $T->set_var('row_name', $LANG_NT00['ip']);
         $T->set_var('row_data', $domain);
-        $T->parse('ABlock','Arow',true);
+        $T->parse('rows', 'row', true);
     } else {
         $ips = gethostbynamel($domain);
-        $T->set_var('row_name',$LANG_NT00['name']);
+        $T->set_var('row_name', $LANG_NT00['name']);
         $T->set_var('row_data', $domain);
-        $T->parse('ABlock','Arow',true);
-        foreach($ips as $ip) {
+        $T->parse('rows', 'row', true);
+
+        if ($ips === false) {
             $T->set_var('row_name', $LANG_NT00['ip']);
-            $T->set_var('row_data', $ip);
-            $T->parse('ABlock','Arow',true);
+            $T->set_var('row_data', $LANG_NT00['unresolved']);
+            $T->parse('rows', 'row', true);
+        } else {
+            foreach($ips as $ip) {
+                $T->set_var('row_name', $LANG_NT00['ip']);
+                $T->set_var('row_data', $ip);
+                $T->parse('rows', 'row', true);
+            }
         }
     }
-    if (function_exists('checkdnsrr')) {
+
+    if (is_callable('getmxrr')) {
         $mxarray = array();
-        getmxrr($domain,$mxarray);
+        getmxrr($domain, $mxarray);
+
         foreach($mxarray as $mx) {
             $T->set_var('row_name', $LANG_NT00['mx']);
             $T->set_var('row_data', $mx);
-            $T->parse('ABlock','Arow',true);
+            $T->parse('rows', 'row', true);
         }
     }
 } else {
     $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
     $T->set_file('page', 'nettools.thtml');
-    $T->set_block('page','frmquery','ABlock');
-    $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
-    $T->set_var('site_url',$_CONF['site_url']);
-    $T->set_var('query_txt',$LANG_NT00['nslookup']);
+    $T->set_block('page', 'frmquery','ABlock');
+    $T->set_var('img_src', $_CONF['site_url'] . '/nettools/net.gif');
+    $T->set_var('site_url', $_CONF['site_url']);
+    $T->set_var('query_txt', $LANG_NT00['nslookup']);
     $T->set_var('query_page','nslookup.php');
-    $T->set_var('input','domain');
-    $T->set_var('in_type','hidden');
-    $T->set_var('sub_name','submit');
-    $T->set_var('sub_value',$LANG_NT00['submit']);
-    $T->parse('ABlock','frmquery',true);
+    $T->set_var('input', 'domain');
+    $T->set_var('in_type', 'hidden');
+    $T->set_var('sub_name', 'submit');
+    $T->set_var('sub_value', $LANG_NT00['submit']);
+    $T->parse('ABlock', 'frmquery', true);
 }
-$T->set_var('form_output','');
-$T->set_var('logo','');
-$T->parse('output','page');
-$display .= $T->finish($T->get_var('output'));
-$display .= COM_endBlock();
-$display .= COM_siteFooter();
 
-echo $display;
-?>
+$T->set_var('form_output', '');
+$T->set_var('logo', '');
+$T->parse('output', 'page');
+$content .= $T->finish($T->get_var('output'))
+    . COM_endBlock();
+$display = COM_createHTMLDocument($content, array('what' => 'menu'));
+COM_output($display);

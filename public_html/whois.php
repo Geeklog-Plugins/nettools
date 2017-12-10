@@ -27,23 +27,22 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-//
-// $Id: 
 
-require_once('../lib-common.php');
-include_once("whois.main.php");
-include_once("whois.utils.php");
+require_once '../lib-common.php';
+include_once './whois.main.php';
+include_once './whois.utils.php';
 
 // Only let Net users access this page
 if ((!SEC_hasRights('Whois.view')) && (!SEC_inGroup('Root'))) {
     // Someone is trying to illegally access this page
-    COM_errorLog("Someone has tried to illegally access the Whois page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
-    $display = COM_siteHeader();
-    $display .= COM_startBlock($LANG_NT00['access_denied']);
-    $display .= $LANG_NT00['access_denied_msg'];
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter(true);
-    echo $display;
+    $uid = isset($_USER['uid']) ? $_USER['uid'] : 0;
+    $userName = isset($_USER['username']) ? $_USER['username'] : '';
+    COM_errorLog("Someone has tried to illegally access the Whois page.  User id: {$uid}, Username: {$userName}, IP: {$_SERVER['REMOTE_ADDR']}",1);
+    $content = COM_startBlock($LANG_NT00['access_denied'])
+        . $LANG_NT00['access_denied_msg']
+        . COM_endBlock();
+    $display = COM_createHTMLDocument($content, array('what' => 'menu'));
+    COM_output($display);
     exit;
 }
 
@@ -51,16 +50,10 @@ if ((!SEC_hasRights('Whois.view')) && (!SEC_inGroup('Root'))) {
 * Main Function
 */
 
-$display = COM_siteHeader();
-$display .= COM_startBlock($LANG_NT00['whois']);
+$content = COM_startBlock($LANG_NT00['whois']);
+$domain = trim(Geeklog\Input::post('domain', ''));
 
-if(isset($_REQUEST['domain'])) {
-    $domain = $_REQUEST['domain'];
-} else {
-    $domain = '';
-}
-
-if ($domain <> '') {
+if ($domain !== '') {
     $whois = new Whois();
     // uncomment the following line to get faster but less acurate results
     // $whois->deep_whois = false;
@@ -78,12 +71,13 @@ if ($domain <> '') {
     $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
     $T->set_var('site_url',$_CONF['site_url']);
     if (!empty($result['rawdata'])) {
-      $utils = new utils;
-      $pre = $utils->showHTML($result);
+        $utils = new utils;
+        $pre = $utils->showHTML($result);
     } else {
-      $pre= implode($whois->Query['errstr'],"\n<br></br>");
-    }       
-    $T->set_var('form_output',$pre . 'something');
+        $pre= implode($whois->Query['errstr'], "\n<br></br>");
+    }
+
+    $T->set_var('form_output', $pre . 'something');
 } else {
     $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
     $T->set_file('page', 'nettools.thtml');
@@ -98,11 +92,10 @@ if ($domain <> '') {
     $T->set_var('sub_value',$LANG_NT00['submit']);
     $T->parse('ABlock','frmquery',true);
 }
-$T->set_var('logo','<img src="whois2-icon.gif">');
-$T->parse('output','page');
-$display .= $T->finish($T->get_var('output'));
-$display .= COM_endBlock();
-$display .= COM_siteFooter();
 
-echo $display;
-?>
+$T->set_var('logo', '<img src="whois2-icon.gif">');
+$T->parse('output', 'page');
+$content .= $T->finish($T->get_var('output'))
+    . COM_endBlock();
+$display = COM_createHTMLDocument($content, array('what' => 'menu'));
+COM_output($display);

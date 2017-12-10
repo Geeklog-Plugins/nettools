@@ -1,3 +1,8 @@
+Nettools Plugin 2.1.2 for Geeklog
+
+Updated to work with Geeklog 2.1.3 or newer.
+updated Dec 10, 2017 by Kenji ITO
+
 Nettools Plugin 2.1.1 for Geeklog
 
 Original author: Tom Willet,

@@ -2,13 +2,14 @@
 
 // +---------------------------------------------------------------------------+
 // | lang.php                                                                  |
-// | This is the English language page for the Geeklog NetTools Plug-in!       |
+// | This is the Japanese language page for the Geeklog NetTools Plug-in!      |
 // |                                                                           |
 // +---------------------------------------------------------------------------|
 // | Copyright (C) 2003 by the following authors:                              |
 // |                                                                           |
 // | Author:                                                                   |
 // | Tom Willett                 -    twillett@users.sourceforge.net           |
+// | Kenji ITO                   -    mystralkk@gmail.com                      |
 // +---------------------------------------------------------------------------|
 // | This program is free software; you can redistribute it and/or             |
 // | modify it under the terms of the GNU General Public License               |
@@ -39,26 +40,26 @@
 */
 
 $LANG_NT00 = array (
-    'nettools'          => 'Net Tools',
-    'whois'             => 'Whois Query',
-    'submit'            => 'Submit Query',
+    'nettools'          => 'ネットツール',
+    'whois'             => 'Whois',
+    'submit'            => '問い合わせる',
     'nslookup'          => 'NSLookup',
     'ping'              => 'Ping',
-    'ping_out'          => 'Ping Output:',
+    'ping_out'          => 'Pingコマンドの出力:',
     'traceroute'        => 'TraceRoute',
-    'host'              => 'Host Name',
+    'host'              => 'ホスト名',
     'ip'                => 'IP',
-    'owner'             => 'Owner',
-    'address'           => 'Address',
-    'city'              => 'City, State ZIP',
-    'country'           => 'Country',
+    'owner'             => 'オーナー',
+    'address'           => '住所',
+    'city'              => '都市, 州 郵便番号',
+    'country'           => '国',
     'net_block'         => 'Net Block',
     'net_name'          => 'Net Name',
     'net_handle'        => 'Net Handle',
-    'name'              => 'Name',
+    'name'              => '名前',
     'ip'                => 'IP',
     'mx'                => 'MX',
-	'unresolved'        => 'Could not resolve host name',
+	'unresolved'        => 'ホスト名を解決できません。',
     'plugin'            => 'Plugin',
 	'access_denied'     => 'Access Denied',
 	'access_denied_msg' => 'You do not have Access to this Page.  Your user name and IP have been recorded.',

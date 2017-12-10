@@ -26,30 +26,25 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-//
-// $Id: 
 
-require_once('../lib-common.php');
+require_once '../lib-common.php';
 
 // Only let Net users access this page
 if ((!SEC_hasRights('Tracert.view')) && (!SEC_hasRights('Ping.view')) && (!SEC_hasRights('NSLookup.view')) && (!SEC_hasRights('Whois.view')) && (!SEC_inGroup('Root'))) {
     // Someone is trying to illegally access this page
-    COM_errorLog("Someone has tried to illegally access the NetTools page.  User id: {$_USER['uid']}, Username: {$_USER['username']}, IP: $REMOTE_ADDR",1);
-    $display = COM_siteHeader();
-    $display .= COM_startBlock($LANG_NT00['access_denied']);
-    $display .= $LANG_NT00['access_denied_msg'];
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter(true);
-    echo $display;
+    $uid = isset($_USER['uid']) ? $_USER['uid'] : 0;
+    $userName = isset($_USER['username']) ? $_USER['username'] : '';
+    COM_errorLog("Someone has tried to illegally access the NetTools page.  User id: {$uid}, Username: {$userName}, IP: {$_SERVER['REMOTE_ADDR']}",1);
+    $content = COM_startBlock($LANG_NT00['access_denied'])
+        . $LANG_NT00['access_denied_msg']
+        . COM_endBlock();
+    $display = COM_createHTMLDocument($content, array('what' => 'menu'));
+    COM_output($display);
     exit;
 }
 
-/* 
-* Main Function
-*/
-
-$display = COM_siteHeader();
-$display .= COM_startBlock($LANG_NT00['nettools']);
+// Main Function
+$content = COM_startBlock($LANG_NT00['nettools']);
 
 $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
 $T->set_file('page', 'nettools.thtml');
@@ -57,11 +52,7 @@ $T->set_block('page','frmquery','ABlock');
 $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
 $T->set_var('site_url',$_CONF['site_url']);
 
-if(isset($_REQUEST['domain'])) {
-	$domain = $_REQUEST['domain'];
-} else {
-    $domain = '';
-}
+$domain = trim(Geeklog\Input::request('domain', ''));
 
 if ((SEC_hasRights('Whois.view')) || (SEC_inGroup('Root'))) {
     $T->set_var('query_txt',$LANG_NT00['whois']);
@@ -104,9 +95,7 @@ if ((SEC_hasRights('Tracert.view')) || (SEC_inGroup('Root'))) {
 }
 
 $T->parse('output','page');
-$display .= $T->finish($T->get_var('output'));
-$display .= COM_endBlock();
-$display .= COM_siteFooter(true);
-
-echo $display;
-?>
+$content .= $T->finish($T->get_var('output'))
+    . COM_endBlock();
+$display = COM_createHTMLDocument($content, array('what' => 'menu'));
+COM_output($display);
