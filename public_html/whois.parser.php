@@ -43,7 +43,7 @@ if (empty($blocks) || !is_array($blocks['main']))
 $r = $blocks['main'];
 $ret['registered'] = 'yes';
 
-while (list($key,$val) = each($contacts))
+foreach ($contacts as $key => $val)
 	if (isset($r[$key]))
 		{
 		if (is_array($r[$key]))
@@ -74,7 +74,7 @@ $blocks = false;
 $gkey = 'main';
 $dend = false;
 
-while (list($key,$val)=each($rawdata))
+foreach ($rawdata as $key => $val)
 	{
 	$val=trim($val);
 
@@ -341,7 +341,7 @@ if (!$items)
 $r = [];
 $disok = true;
 
-while (list($key,$val) = each($rawdata))
+foreach ($rawdata as $key => $val)
 	{
 	if (trim($val) != '')
 		{
@@ -353,9 +353,8 @@ while (list($key,$val) = each($rawdata))
 			}
 
 		$disok = false;
-		reset($items);
 
-		while (list($match, $field)=each($items))
+		foreach ($items as $match => $field)
 			{
 			$pos = strpos($val,$match);
 
@@ -427,7 +426,7 @@ function get_blocks ( $rawdata, $items, $partial_match = false, $def_block = fal
 $r = array();
 $endtag = '';
 
-while (list($key,$val) = each($rawdata))
+foreach ($rawdata as $key => $val)
 	{
 	$val = trim($val);
 	if ($val == '') continue;
@@ -475,7 +474,7 @@ while (list($key,$val) = each($rawdata))
 
 	// Block found, get data ...
 
-	while (list($key,$val) = each($rawdata))
+	foreach ($rawdata as $key => $val)
 		{
 		$val = trim($val);
 
@@ -624,7 +623,7 @@ if ($extra_items)
 	$items = $extra_items;
 	}
 
-while (list($key,$val)=each($array))
+foreach ($array as $key => $val)
 	{
 	$ok=true;
 
@@ -633,7 +632,7 @@ while (list($key,$val)=each($array))
 		reset($items);
 		$ok = false;
 
-		while (list($match,$field) = each($items))
+		foreach ($items as $match => $field)
 			{
 			$pos = strpos(strtolower($val),$match);
 
@@ -847,7 +846,7 @@ while (!$ok)
 	reset($res);
 	$ok = true;
 
-	while (list($key, $val) = each($res))
+	foreach ($res as $key => $val)
 		{
 		if ($val == '' || $key == '') continue;
 
