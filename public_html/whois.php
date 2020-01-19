@@ -51,7 +51,7 @@ if ((!SEC_hasRights('Whois.view')) && (!SEC_inGroup('Root'))) {
 */
 
 $content = COM_startBlock($LANG_NT00['whois']);
-$domain = trim(Geeklog\Input::post('domain', ''));
+$domain = trim(Geeklog\Input::fGetOrPost('domain', ''));
 
 if ($domain !== '') {
     $whois = new Whois();
