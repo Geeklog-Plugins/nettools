@@ -8,7 +8,7 @@
 // |                                                                           |
 // | This file provides helper functions for the automatic plugin install.     |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2010 by the following authors:                         |
+// | Copyright (C) 2008-2020 by the following authors:                         |
 // |                                                                           |
 // | Authors: Dirk Haun         - dirk AT haun-online DOT de                   |
 // |          Tom Willett       - twillett AT users DOT sourceforge DOT net    |
@@ -52,7 +52,7 @@ function plugin_autoinstall_nettools($pi_name)
     $info = array(
         'pi_name'         => $pi_name,
         'pi_display_name' => $pi_display_name,
-        'pi_version'      => '2.1.2',
+        'pi_version'      => '2.1.3',
         'pi_gl_version'   => '1.6.0',
         'pi_homepage'     => 'https://www.geeklog.net/'
     );
@@ -82,7 +82,8 @@ function plugin_autoinstall_nettools($pi_name)
         'info'      => $info,
         'groups'    => $groups,
         'features'  => $features,
-        'mappings'  => $mappings
+        'mappings'  => $mappings,
+        'tables'    => $tables
     );
 
     return $inst_parms;

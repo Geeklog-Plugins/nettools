@@ -25,11 +25,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-require_once './whois.client.php';
-require_once './whois.idna.php';
+require_once('whois.client.php');
+require_once('whois.idna.php');
 
 class Whois extends WhoisClient
-{
+	{
 	// Deep whois ?
 	var $deep_whois = true;
 
@@ -48,8 +48,8 @@ class Whois extends WhoisClient
 	/*
 	 * Constructor function
 	 */
-	public function __construct()
-	{
+	function __construct()
+		{
 		// Load DATA array
 		@require('whois.servers.php');
 

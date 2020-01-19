@@ -37,9 +37,12 @@ $this->DATA = array(
 	'jobs'		=> 'gtld',
 	'li'		=> 'ch',
 	'net'		=> 'gtld',
+	'su'		=> 'ru',
 	'tv'		=> 'gtld',
 	'za.org'	=> 'zanet',
-	'za.net'	=> 'zanet'
+	'za.net'	=> 'zanet',
+	// Punicode
+	'xn--p1ai' => 'ru'
 	);
 
 /* Non UTF-8 servers */
@@ -78,6 +81,7 @@ $this->WHOIS_SPECIAL = array(
 		'ba'	 => '',
 		'bb'	 => 'http://domains.org.bb/regsearch/getdetails.cfm?DND={domain}.bb',
 		'bg'	 => 'http://www.register.bg/bg-nic/displaydomain.pl?domain={domain}.bg&search=exist',
+		'bh'	 => 'whois.nic.bh',
 		'bi'	 => 'whois.nic.bi',
 		'bj'	 => 'whois.nic.bj',
 		'by'	 => '',
@@ -246,7 +250,6 @@ $this->WHOIS_NON_ICANN = array (
 		'viagem'	=> 'http://www.new.net/search_whois.tp?domain={domain}&tld={tld}',
 		'video'		=> 'http://www.new.net/search_whois.tp?domain={domain}&tld={tld}',
 		'voyage'	=> 'http://www.new.net/search_whois.tp?domain={domain}&tld={tld}',
-		'xxx'		=> 'http://www.new.net/search_whois.tp?domain={domain}&tld={tld}',
 		'z'			=> 'http://www.adns.net/whois.php?txtDOMAIN={domain}.{tld}'
 		);
 ?>

@@ -74,7 +74,11 @@ if ($domain !== '') {
         $utils = new utils;
         $pre = $utils->showHTML($result);
     } else {
-        $pre= implode("\n<br></br>", $whois->Query['errstr']);
+        if (isset($whois->Query['errstr'])) {
+            $pre = implode("\n<br></br>", $whois->Query['errstr']);
+        } else {
+            $pre = 'Unexpected error';
+        }
     }
 
     $T->set_var('form_output', $pre . 'something');

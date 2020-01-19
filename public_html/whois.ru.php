@@ -45,7 +45,7 @@ class ru_handler
                   'org:' => 'owner.organization',
                   'phone:' => 'owner.phone',
                   'fax-no:' => 'owner.fax',
-                  'email:' => 'admin.email'
+                  'e-mail:' => 'owner.email'
 		              );
 
 		$r['regrinfo'] = generic_parser_b($data_str['rawdata'], $items, 'dmy');
@@ -55,7 +55,7 @@ class ru_handler
 
 		$r['regyinfo'] = array(
                             'referrer' => 'http://www.ripn.net',
-                            'registrar' => 'RUCENTER-REG-RIPN'
+                            'registrar' => 'RU-CENTER-REG-RIPN'
                           );
 		return $r;
 		}

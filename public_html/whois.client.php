@@ -68,7 +68,7 @@ class WhoisClient {
 	/*
 	 * Constructor function
 	 */
-	public function __construct() {
+	function __construct () {
 		// Load DATA array
 		@require('whois.servers.php');		
 

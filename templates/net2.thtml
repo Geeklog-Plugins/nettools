@@ -1,4 +1,4 @@
-<a href="{site_url}/nettools/nettools.php"><img src="{img_src}" border="0"></a><br{xhtml}>
+<a href="{site_url}/nettools/nettools.php"><img src="{img_src}" border="0"{xhtml}></a><br{xhtml}>
 
 <dl>
   {rows}
@@ -7,4 +7,4 @@
 <p>
 {form_output}
 </p>
-<p>Powered by phpWhois</p>
+<p>Powered by phpWhois <img src="{site_url}/nettools/whois.icon.png" alt="phpWhois"{xhtml}></p>

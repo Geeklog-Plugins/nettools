@@ -1,4 +1,8 @@
-Nettools Plugin 2.1.2 for Geeklog
+Nettools Plugin 2.1.3 for Geeklog
+
+Updated to work with PHP 7.4.
+Updated phpWhois library to v4.2.2
+updated Jan 19, 2020 by Kenji ITO
 
 Updated to work with Geeklog 2.1.3 or newer.
 updated Dec 10, 2017 by Kenji ITO

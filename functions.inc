@@ -10,7 +10,7 @@
 // | PHP files.                                                                |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2002-2010 by the following authors:                         |
+// | Copyright (C) 2002-2020 by the following authors:                         |
 // |                                                                           |
 // | Authors: Tom Willett      - twillett AT users DOT sourceforge DOT net     |
 // +---------------------------------------------------------------------------+
@@ -225,8 +225,9 @@ function plugin_upgrade_nettools()
         case '2.0':
         case '2.1.0':
         case '2.1.1':
+        case '2.1.2':
             // no changes required - just update the version number
-            $current_version = '2.1.2';
+            $current_version = '2.1.3';
             break;
 
         default:
