@@ -1,7 +1,7 @@
 # Geeklog NetTools Plugin
 
 * Original Author: Tom Willet,
-* Maintainers: Dirk Haun, Kenji ITO, Tom (https://github.com/Geeklog-Plugins/nettools/graphs/contributors)
+* Maintainers: [Geeklog Community Members] (https://github.com/Geeklog-Plugins/nettools/graphs/contributors)
 * Latest Release Supports: Geeklog v2.2.0+
 
 ## Summary
