@@ -1,0 +1,29 @@
+Geeklog NetTools Plugin Change Log
+
+v2.1.3 (released 2020-04-19)
+- [Improvement] Supports PHP v7.0+
+- [Improvement] Added Changelog and reworked Readme file
+- [Improvement] Updated phpWhois library to v4.2.2
+- [Bug] Fixed issue where WHoIS errors out
+
+v2.1.2 (released 2018-06-07)
+
+- [Info] Requires Geeklog v2.1.3
+- [Info] Updated Dec 10, 2017 by Kenji ITO
+- [Improvement] Updated to work with Geeklog 2.1.3 or newer.
+
+v2.1.1 (released 2012-12-09)
+
+- [Info] Requires Geeklog v1.6.0
+- [Info] Updated Aug 1, 2010 & Dec 9, 2012 by Dirk Haun
+- [Improvement] Updated phpWhois library to v4.2.0
+- [Improvement] Admin page and config file removed
+- [Improvement] NetTools features now found under User Functions Block
+- [Improvement] Updated to use Geeklog's API for better integration for installs and upgrades
+- [Bug] Fixes to the Whois lookup
+
+
+v2.0.0 (released 2007-04-12)
+
+- [Info] Updated by Tom Willett
+- [Improvement] Updated phpWhois library to v4.1.2

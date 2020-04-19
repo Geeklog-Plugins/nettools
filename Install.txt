@@ -1,20 +1,48 @@
-Nettools Plugin 2.1.2 for Geeklog
+Install/Upgrade/Uninstall instructions for the Geeklog NetTools Plugin v2.1.1+ 
 
-Updated to work with Geeklog 2.1.3 or newer.
-updated Dec 10, 2017 by Kenji ITO
+These instructions assume you have installed a Geeklog plugin before.
 
-Nettools Plugin 2.1.1 for Geeklog
+You must be using at least Geeklog version v2.1.3 to install this plugin.
 
-Original author: Tom Willet,
-updated Aug 1, 2010 & Dec 9, 2012 by Dirk Haun
 
-The Nettools plugin provides networking tools for Whois, NSLookup, Ping, and
-Traceroute. This update to the Nettools plugin includes new Whois code, taken
-from phpWhois 4.2.2
+INSTALL/UPGRADE:
 
-  http://sourceforge.net/projects/phpwhois/
+Step 1:  No need to back up your Geeklog Database as this plugin does not add any tables.
 
-Upgrading: If you are running one of Tom's versions of this plugin and want to
+Step 2:  Either A) Log in to your Geeklog as a root user and upload the plugin using the Geeklog upload functionality found in the Admin Plugins page. If you do this, skip to Step 7, OR B) Go to Step 3.
+
+Step 3:  Uncompress the NetTools Plugin archive from the path.to.geeklog/plugins directory.  The archive will create a directory called "nettools" in the plugins directory.
+
+Step 4:  Create the public_html directory.  Under your html directory (usually public_html) create a directory called "nettools".
+
+Step 5:  From the path.to.geeklog/plugins/nettools/ directory, copy the files and directories in the public_html directory to the public_html/nettools/ directory your created in Step 4.
+
+Step 6:  Log in to your Geeklog as a root user and visit the Admin Plugins page.  For new installs look at the list of Uninstalled Plugins and you should fine the NetTools Plugin listed. Click the install button. For upgrades, look at the plugin list, there should be an upgrade button visible that you can press to start the upgrade process. 
+
+Once installed/upgraded a success message will be displayed. If not examine Geeklog's logs/error.log for possible problems.
+
+Step 7:  The NetTools Plugin should now be installed and functioning.  From your User Functions block, click on the NetTools link and it will take you to the NetTools page.
+
+Step 8:  All root users will have access to the features of the NetTools plugin since they belong to the Nettools Admin group. If you wish other users to have access, either add them to this user group or create/use another user group (that the user belongs too) and give that group one or more of the following security rights:
+
+- Whois.view
+- NSLookup.view
+- Ping.view
+- Tracert.view
+
+
+UNINSTALL:
+
+Step 1:  From the Admin Plugins page, you can uninstall the NetTools Plugin.
+
+Step 2:  You then must manually delete the two plugin directories created in the install process:  
+<geeklog-dir>plugins/nettools/ 
+<public_html>/nettools/
+
+----------------------------------------------------
+
+
+Upgrading: If you are running one of Tom's versions of this plugin (lower than v2.1.1) and want to
 upgrade to this new version, please follow these steps:
 
 - disable the plugin
@@ -36,7 +64,7 @@ Dirk Haun,
 
 Tom's original Readme.txt follows ...
 
----
+----------------------------------------------------
 
 Geeklog NetTools Plugin
 Tom Willett

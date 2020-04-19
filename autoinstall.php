@@ -53,7 +53,7 @@ function plugin_autoinstall_nettools($pi_name)
         'pi_name'         => $pi_name,
         'pi_display_name' => $pi_display_name,
         'pi_version'      => '2.1.3',
-        'pi_gl_version'   => '1.6.0',
+        'pi_gl_version'   => '2.1.3',
         'pi_homepage'     => 'https://www.geeklog.net/'
     );
 
