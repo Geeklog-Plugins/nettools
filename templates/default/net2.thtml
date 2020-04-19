@@ -1,3 +1,5 @@
+{# begin {templatelocation} #}
+
 <a href="{site_url}/nettools/nettools.php"><img src="{img_src}" border="0"{xhtml}></a><br{xhtml}>
 
 <dl>
@@ -7,4 +9,7 @@
 <p>
 {form_output}
 </p>
+
 <p>Powered by phpWhois <img src="{site_url}/nettools/whois.icon.png" alt="phpWhois"{xhtml}></p>
+
+{# end {templatelocation} #}

@@ -1,0 +1,6 @@
+{# begin {templatelocation} #}
+
+<dt>{row_name}</dt>
+<dd>{row_data}</dd>
+
+{# end {templatelocation} #}

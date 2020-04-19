@@ -66,7 +66,8 @@ if (Geeklog\Input::post('submit') === $LANG_NT00['ping']) {
     // try to make it safe
     $host = preg_replace ('/[^A-Za-z0-9._-]/', '', $host);
     $host = escapeshellcmd($host);
-    $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+	$T = COM_newTemplate(CTL_plugin_templatePath('nettools'));
+	
     $T->set_file(array(
         'page' => 'net2.thtml',
         'row'  => 'row.thtml',
@@ -88,7 +89,7 @@ if (Geeklog\Input::post('submit') === $LANG_NT00['ping']) {
     $result = NETTOOLS_formatResult($result);
     $T->set_var('form_output', $result);
 } else {
-    $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+    $T = COM_newTemplate(CTL_plugin_templatePath('nettools'));
     $T->set_file('page', 'nettools.thtml');
     $T->set_block('page', 'frmquery', 'ABlock');
     $T->set_var('img_src', $_CONF['site_url'] . '/nettools/net.gif');

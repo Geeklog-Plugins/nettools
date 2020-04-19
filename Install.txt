@@ -33,7 +33,7 @@ Step 8:  All root users will have access to the features of the NetTools plugin 
 
 UNINSTALL:
 
-Step 1:  From the Admin Plugins page, you can uninstall the NetTools Plugin.
+Step 1:  From the Admin Plugins page, you can uninstall the NetTools Plugin by clicking on the Delete button.
 
 Step 2:  You then must manually delete the two plugin directories created in the install process:  
 <geeklog-dir>plugins/nettools/ 

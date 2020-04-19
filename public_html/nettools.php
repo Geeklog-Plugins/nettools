@@ -46,7 +46,7 @@ if ((!SEC_hasRights('Tracert.view')) && (!SEC_hasRights('Ping.view')) && (!SEC_h
 // Main Function
 $content = COM_startBlock($LANG_NT00['nettools']);
 
-$T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+$T = COM_newTemplate(CTL_plugin_templatePath('nettools'));
 $T->set_file('page', 'nettools.thtml');
 $T->set_block('page','frmquery','ABlock');
 $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');

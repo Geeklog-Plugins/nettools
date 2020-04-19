@@ -236,7 +236,10 @@ function plugin_upgrade_nettools()
         }
     }
 
-    DB_query("UPDATE {$_TABLES['plugins']} SET pi_version = '$code_version', pi_gl_version = '$pi_gl_version' WHERE pi_name = 'nettools'");
+    // update plugin version number and other info
+    DB_query("UPDATE {$_TABLES['plugins']} SET pi_version = '$code_version', pi_gl_version = '{$inst_parms['info']['pi_gl_version']}', pi_homepage = '{$inst_parms['info']['pi_homepage']}' WHERE pi_name = 'nettools'");
+
+    COM_errorLog( "Updated NetTools Plugin from v$installed_version to v$code_version", 1 );
 
     return true;
 }

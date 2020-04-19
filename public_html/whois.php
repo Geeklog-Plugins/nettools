@@ -66,7 +66,7 @@ if ($domain !== '') {
 	
     $result = $whois->Lookup($domain);
 	
-    $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+    $T = COM_newTemplate(CTL_plugin_templatePath('nettools'));
     $T->set_file('page', 'net2.thtml');
     $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
     $T->set_var('site_url',$_CONF['site_url']);
@@ -83,7 +83,7 @@ if ($domain !== '') {
 
     $T->set_var('form_output', $pre . 'something');
 } else {
-    $T = new Template($_CONF['path'] . 'plugins/nettools/templates');
+    $T = COM_newTemplate(CTL_plugin_templatePath('nettools'));
     $T->set_file('page', 'nettools.thtml');
     $T->set_block('page','frmquery','ABlock');
     $T->set_var('img_src',$_CONF['site_url'] . '/nettools/net.gif');
