@@ -14,7 +14,10 @@ http://sourceforge.net/projects/phpwhois/
 
 ## Other Information
 
-Plugin Homepage:
+Geeklog Homepage:
+https://www.geeklog.net
+
+NetTools Plugin Homepage:
 https://github.com/Geeklog-Plugins/nettools
 
 To find the latest releases see:
