@@ -23,7 +23,7 @@ Once installed/upgraded a success message will be displayed. If not examine Geek
 
 Step 7:  The NetTools Plugin should now be installed and functioning.  From your User Functions block, click on the NetTools link and it will take you to the NetTools page.
 
-Step 8:  All root users will have access to the features of the NetTools plugin since they belong to the Nettools Admin group. If you wish other users to have access, either add them to this user group or create/use another user group (that the user belongs too) and give that group one or more of the following security rights:
+Step 8:  All root users will have access to the features of the NetTools Plugin since they belong to the Nettools Admin group. If you wish other users to have access, either add them to this user group or create/use another user group (that the user belongs too) and give that group one or more of the following security rights:
 
 - Whois.view
 - NSLookup.view
