@@ -2,7 +2,7 @@
 
 * Original Author: Tom Willet,
 * Maintainers: [Geeklog Community Members](https://github.com/Geeklog-Plugins/nettools/graphs/contributors)
-* Latest Release Supports: Geeklog v2.2.0+
+* Latest Release Supports: Geeklog v2.2.0 or higher
 
 ## Summary
 
