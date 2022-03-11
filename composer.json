@@ -1,0 +1,13 @@
+{
+  "config": {
+    "preferred-install": {
+      "*": "dist"
+    },
+    "platform": {
+      "php": "7.2.0"
+    }
+  },
+  "require": {
+    "jsmitty12/phpwhois": "^6.0"
+  }
+}

@@ -28,9 +28,13 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
+use phpWhois\Whois;
+use phpWhois\Utils;
+
+global $_CONF;
+
 require_once '../lib-common.php';
-include_once './whois.main.php';
-include_once './whois.utils.php';
+require_once $_CONF['path'] . 'plugins/nettools/vendor/autoload.php';
 
 // Only let Net users access this page
 if ((!SEC_hasRights('Whois.view')) && (!SEC_inGroup('Root'))) {
