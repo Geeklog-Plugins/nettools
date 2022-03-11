@@ -8,7 +8,7 @@
 // |                                                                           |
 // | This file provides helper functions for the automatic plugin install.     |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2008-2020 by the following authors:                         |
+// | Copyright (C) 2008-2022 by the following authors:                         |
 // |                                                                           |
 // | Authors: Dirk Haun         - dirk AT haun-online DOT de                   |
 // |          Tom Willett       - twillett AT users DOT sourceforge DOT net    |
@@ -52,7 +52,7 @@ function plugin_autoinstall_nettools($pi_name)
     $info = array(
         'pi_name'         => $pi_name,
         'pi_display_name' => $pi_display_name,
-        'pi_version'      => '2.1.3',
+        'pi_version'      => '2.1.4',
         'pi_gl_version'   => '2.2.0',
         'pi_homepage'     => 'https://github.com/Geeklog-Plugins/Nettools'
     );
@@ -87,4 +87,16 @@ function plugin_autoinstall_nettools($pi_name)
     );
 
     return $inst_parms;
+}
+
+/**
+* Check if the plugin is compatible with this Geeklog version
+*
+* @param    string  $pi_name    Plugin name
+* @return   boolean             true: plugin compatible; false: not compatible
+*
+*/
+function plugin_compatible_with_this_version_nettools($pi_name)
+{
+    return version_compare(PHP_VERSION, '7.2.0', '>=');
 }

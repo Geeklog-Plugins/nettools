@@ -3,14 +3,13 @@
 * Original Author: Tom Willet,
 * Maintainers: [Geeklog Community Members](https://github.com/Geeklog-Plugins/nettools/graphs/contributors)
 * Latest Release Supports: Geeklog v2.2.0 or higher
+* Requires PHP 7.2.0 or newer
 
 ## Summary
 
 The NetTools Plugin provides networking tools built into Geeklog for 
 Whois, NSLookup, Ping, and Traceroute. This update to the NetTools 
-Plugin includes new Whois code, taken from phpWhois 4.2.2.
-
-http://sourceforge.net/projects/phpwhois/
+Plugin includes new Whois code, taken from jsmitty12/phpwhois.
 
 ## Other Information
 
