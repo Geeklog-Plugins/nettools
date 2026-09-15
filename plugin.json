@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "id": "nettools",
+  "name": "nettools",
+  "icon": "public_html/net.gif",
+  "requires": {
+    "geeklog": "2.2.0"
+  }
+}
